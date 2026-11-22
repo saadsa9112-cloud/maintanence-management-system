@@ -1,0 +1,19 @@
+# Node dependencies
+node_modules/
+01-web-application/node_modules/
+01-web-application/dist/
+
+# Local filesystem junctions / symlinks
+app
+
+# Environment & local files
+.env
+.env.local
+*.log
+
+# OS & Editor files
+.DS_Store
+Thumbs.db
+desktop.ini
+.vscode/
+.idea/

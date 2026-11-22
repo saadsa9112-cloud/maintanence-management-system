@@ -1,0 +1,1897 @@
+<!DOCTYPE html>
+<html lang="ur" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>المصطفیٰ ہائٹس — مینٹیننس سسٹم</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- SheetJS for real Excel (.xlsx) export matching existing format -->
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Nastaliq+Urdu:wght@400;700&family=Segoe+UI:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f8fafc;
+        }
+        .urdu-font {
+            font-family: 'Segoe UI', Tahoma, 'Noto Nastaliq Urdu', sans-serif;
+        }
+        .tab-btn {
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .tab-btn.active {
+            background: linear-gradient(135deg, #1e3a8a, #1e40af);
+            color: #ffffff;
+            box-shadow: 0 4px 14px rgba(30, 58, 138, 0.35);
+        }
+        .tab-btn:not(.active) {
+            background: #ffffff;
+            color: #475569;
+            border: 1px solid #e2e8f0;
+        }
+        .tab-btn:not(.active):hover {
+            background: #f1f5f9;
+            color: #1e293b;
+        }
+        .fade-in {
+            animation: fadeIn 0.25s ease-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(6px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        input[type="number"]::-webkit-inner-spin-button,
+        input[type="number"]::-webkit-outer-spin-button {
+            opacity: 1;
+        }
+        @media print {
+            .no-print { display: none !important; }
+            body { background: white; padding: 0 !important; }
+            .shadow-lg, .shadow-md, .shadow-sm { box-shadow: none !important; }
+            .border { border-color: #cbd5e1 !important; }
+        }
+    </style>
+</head>
+<body class="text-slate-800 antialiased p-2 sm:p-5 min-h-screen">
+
+<div class="max-w-7xl mx-auto space-y-4">
+
+    <!-- ========================================== -->
+    <!-- 1. TOP HEADER & BRANDING                   -->
+    <!-- ========================================== -->
+    <header class="bg-gradient-to-r from-slate-900 via-blue-950 to-indigo-950 text-white p-4 sm:p-5 rounded-2xl shadow-md border border-blue-900/60 relative overflow-hidden">
+        <div class="relative z-10 flex flex-col md:flex-row items-center justify-between gap-4 text-center md:text-right">
+            <div>
+                <div class="inline-flex items-center gap-2 bg-blue-800/60 text-blue-200 text-xs px-3 py-1 rounded-full font-medium mb-1">
+                    <span>🏢</span>
+                    <span>بلڈنگ مینٹیننس و کیش رجسٹر 2026</span>
+                </div>
+                <h1 class="text-xl sm:text-2xl lg:text-3xl font-extrabold tracking-tight">AL MUSTAFA HEIGHTS (5-E-18/19)</h1>
+                <p class="text-slate-300 text-xs sm:text-sm mt-0.5">ماہانہ مینٹیننس وصولی، بلڈنگ اخراجات اور کیش فلو حساب کتاب</p>
+            </div>
+
+            <!-- Header Quick Actions -->
+            <div class="flex items-center gap-2 flex-wrap justify-center">
+                <!-- Roman to Urdu Toggle -->
+                <button id="romanUrduToggle" onclick="toggleRomanUrdu()" class="bg-indigo-900/80 hover:bg-indigo-800 text-indigo-100 text-xs font-bold py-2 px-3 rounded-xl border border-indigo-700/60 transition flex items-center gap-1.5 shadow-sm" title="رومن اردو ٹائپنگ آن یا آف کریں">
+                    <span id="romanUrduIndicator" class="w-2.5 h-2.5 rounded-full bg-emerald-400 inline-block animate-pulse"></span>
+                    <span id="romanUrduLabel">🔤 رومن تا اردو: آن</span>
+                </button>
+
+                <!-- Excel Export -->
+                <button onclick="exportToExcelOriginalFormat()" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2 px-3.5 rounded-xl text-xs sm:text-sm flex items-center gap-1.5 transition shadow-sm" title="اصل فارمیٹ میں ایکسل شیٹ ڈاؤن لوڈ کریں">
+                    <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-6zM6 20V4h7v5h5v11H6z"/><path d="M8 12h2.5l1.5 2.5 1.5-2.5H16l-2.5 3.5 2.5 3.5h-2.5L12 16.5 10.5 19H8l2.5-3.5L8 12z"/></svg>
+                    <span>ایکسل ایکسپورٹ (.xlsx)</span>
+                </button>
+
+                <!-- Backup & Restore -->
+                <div class="flex items-center gap-1">
+                    <button onclick="exportBackupJSON()" class="bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold py-2 px-2.5 rounded-lg border border-slate-700 transition" title="ڈیٹا بیک اپ فائل ڈاؤن لوڈ کریں">💾 بیک اپ</button>
+                    <label class="bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold py-2 px-2.5 rounded-lg border border-slate-700 transition cursor-pointer" title="پہلے سے محفوظ بیک اپ فائل لوڈ کریں">
+                        📂 ری اسٹور
+                        <input type="file" accept=".json" onchange="importBackupJSON(event)" class="hidden">
+                    </label>
+                </div>
+            </div>
+        </div>
+        <div class="absolute -left-10 -bottom-10 w-44 h-44 bg-blue-500/10 rounded-full blur-3xl pointer-events-none"></div>
+    </header>
+
+    <!-- ========================================== -->
+    <!-- 2. MONTH SELECTOR & NAVIGATION TABS        -->
+    <!-- ========================================== -->
+    <div class="no-print bg-white p-3.5 rounded-2xl shadow-sm border border-slate-200 flex flex-col md:flex-row items-center justify-between gap-3">
+        <!-- Month Switcher -->
+        <div class="flex items-center gap-2.5 w-full md:w-auto">
+            <span class="text-xs sm:text-sm font-bold text-slate-700 whitespace-nowrap">📅 مہینہ:</span>
+            <select id="monthSelect" onchange="switchMonth(this.value)" class="bg-slate-50 hover:bg-slate-100 text-slate-900 font-extrabold py-2 px-3 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-600 transition text-sm cursor-pointer"></select>
+            <button onclick="openNewMonthModal()" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-3 rounded-xl text-xs flex items-center gap-1 transition shadow-sm whitespace-nowrap">
+                <span class="text-sm leading-none">+</span> نیا مہینہ
+            </button>
+            <span id="dateBadge" class="text-xs bg-slate-100 text-slate-600 border border-slate-200 px-2.5 py-1.5 rounded-lg hidden lg:inline-block">تاریخ: -</span>
+        </div>
+
+        <!-- Main View Switcher Tabs -->
+        <div class="flex items-center gap-1.5 overflow-x-auto w-full md:w-auto justify-start md:justify-end pb-1 md:pb-0">
+            <button onclick="switchTab('wusooli')" id="tab-wusooli" class="tab-btn active font-bold py-2 px-3 sm:px-4 rounded-xl text-xs sm:text-sm flex items-center gap-1.5 whitespace-nowrap">
+                <span>📋</span>
+                <span>نارمل وصولی شیٹ</span>
+                <span id="tabUnpaidBadge" class="bg-rose-500 text-white text-[10px] px-1.5 py-0.5 rounded-full font-bold ml-0.5 hidden">0</span>
+            </button>
+            <button onclick="switchTab('final')" id="tab-final" class="tab-btn font-bold py-2 px-3 sm:px-4 rounded-xl text-xs sm:text-sm flex items-center gap-1.5 whitespace-nowrap">
+                <span>📊</span>
+                <span>فائنل سمری و اخراجات</span>
+            </button>
+            <button onclick="switchTab('expenses')" id="tab-expenses" class="tab-btn font-bold py-2 px-3 sm:px-4 rounded-xl text-xs sm:text-sm flex items-center gap-1.5 whitespace-nowrap">
+                <span>🧾</span>
+                <span>اخراجات داخل کریں</span>
+            </button>
+            <button onclick="switchTab('settings')" id="tab-settings" class="tab-btn font-bold py-2 px-3 sm:px-4 rounded-xl text-xs sm:text-sm flex items-center gap-1.5 whitespace-nowrap">
+                <span>⚙️</span>
+                <span>فلیٹ لسٹ سیٹنگز</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- ============================================================== -->
+    <!-- VIEW 1: 📋 نارمل وصولی شیٹ (ENTRY + UNPAID DEFAULTERS LIST) -->
+    <!-- ============================================================== -->
+    <div id="panel-wusooli" class="tab-panel fade-in space-y-4">
+
+        <!-- 🚨 DEDICATED UNPAID / DEFAULTERS LIST BOX -->
+        <div class="bg-gradient-to-br from-rose-50 to-orange-50 border-2 border-rose-300 rounded-2xl p-4 sm:p-5 shadow-sm space-y-3">
+            <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 border-b border-rose-200 pb-3">
+                <div>
+                    <h3 class="text-base sm:text-lg font-extrabold text-rose-900 flex items-center gap-2">
+                        <span class="bg-rose-600 text-white p-1 rounded-lg text-xs">⚠️</span>
+                        <span>غیر وصول شدہ / بقایا داران کی فہرست (Defaulters List)</span>
+                        <span id="unpaidCountPill" class="bg-rose-200 text-rose-800 text-xs px-2.5 py-0.5 rounded-full font-bold">3 فلیٹس</span>
+                    </h3>
+                    <p class="text-xs text-rose-700 mt-0.5">جن فلیٹس کے واجبات ابھی تک موصول نہیں ہوئے یا جزوی باقی ہیں، ان کی الگ فہرست:</p>
+                </div>
+
+                <!-- Defaulters Action Buttons -->
+                <div class="flex items-center gap-2 flex-wrap w-full sm:w-auto">
+                    <button onclick="shareWhatsAppGroup()" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2 px-3.5 rounded-xl shadow-sm text-xs sm:text-sm flex items-center gap-1.5 transition">
+                        <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.582 2.128 2.182-.573c.978.58 1.911.928 3.145.929 3.178 0 5.767-2.587 5.768-5.766.001-3.187-2.575-5.77-5.764-5.771zm3.392 8.244c-.144.405-.837.774-1.17.824-.299.045-.677.063-1.092-.069-.252-.08-.575-.187-.988-.365-1.739-.751-2.874-2.502-2.961-2.617-.087-.116-.708-.94-.708-1.793s.448-1.273.607-1.446c.159-.173.346-.217.462-.217l.332.007c.101.005.234-.038.365.278.144.346.491 1.2.535 1.287.043.086.072.187.014.302-.058.116-.087.188-.173.289l-.26.303c-.087.087-.179.182-.077.357.101.174.453.748.972 1.211.669.597 1.233.782 1.407.869.173.087.275.072.376-.043.101-.116.433-.506.549-.68.116-.173.231-.145.39-.087s1.011.477 1.184.564.289.13.332.202c.045.072.045.419-.1.824zm-3.423-14.416c-6.627 0-12 5.373-12 12 0 2.12.553 4.11 1.524 5.84l-1.624 5.928 6.076-1.594c1.677.915 3.597 1.426 5.631 1.426 6.627 0 12-5.373 12-12 0-6.627-5.373-12-12-12z"/></svg>
+                        <span>پورے گروپ میں لسٹ بھیجیں</span>
+                    </button>
+                    <button onclick="copyWhatsAppList()" class="bg-white hover:bg-slate-100 text-slate-700 font-bold py-2 px-3 rounded-xl border border-slate-300 shadow-sm text-xs flex items-center gap-1.5 transition">
+                        📋 کاپی کریں
+                    </button>
+                </div>
+            </div>
+
+            <!-- Defaulters Cards Container -->
+            <div id="unpaidCardsContainer" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2.5">
+                <!-- Injected via JavaScript -->
+            </div>
+
+            <!-- Defaulters Summary Footer -->
+            <div class="bg-white/80 p-3 rounded-xl border border-rose-200 flex flex-wrap items-center justify-between gap-2 text-xs sm:text-sm">
+                <span class="font-bold text-slate-700">کل غیر وصول شدہ / بقایا رقم:</span>
+                <span id="unpaidTotalAmount" class="font-extrabold text-rose-700 text-base sm:text-lg">Rs. 0</span>
+            </div>
+        </div>
+
+        <!-- MAIN NORMAL WUSOOLI TABLE -->
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+            <div class="bg-slate-900 text-white p-3.5 sm:p-4 flex flex-col sm:flex-row items-center justify-between gap-3">
+                <div class="flex items-center gap-2">
+                    <span class="text-base sm:text-lg">📋</span>
+                    <h2 class="font-extrabold text-sm sm:text-base">نارمل وصولی رجسٹر (فلیٹ وائز ریکارڈ)</h2>
+                    <span class="text-xs bg-slate-800 text-slate-300 px-2 py-0.5 rounded-full font-bold" id="totalFlatsBadge">20 یونٹس</span>
+                </div>
+
+                <!-- Table Controls: Search & Filters -->
+                <div class="flex items-center gap-2 flex-wrap w-full sm:w-auto">
+                    <!-- Search with Roman/Urdu support -->
+                    <div class="relative flex-1 sm:w-48">
+                        <input type="text" id="wusooliSearch" oninput="filterWusooliTable()" placeholder="🔍 نام یا فلیٹ تلاش کریں..." class="urdu-input w-full bg-slate-800 text-white placeholder-slate-400 text-xs py-1.5 px-2.5 rounded-lg border border-slate-700 focus:outline-none focus:border-blue-500">
+                    </div>
+
+                    <!-- Quick filters -->
+                    <div class="flex items-center bg-slate-800 p-0.5 rounded-lg text-xs">
+                        <button onclick="setWusooliFilter('all')" id="wf-all" class="px-2.5 py-1 rounded-md font-bold text-white bg-blue-600 transition">سب</button>
+                        <button onclick="setWusooliFilter('unpaid')" id="wf-unpaid" class="px-2.5 py-1 rounded-md font-bold text-slate-300 hover:text-white transition">صرف بقایا</button>
+                        <button onclick="setWusooliFilter('paid')" id="wf-paid" class="px-2.5 py-1 rounded-md font-bold text-slate-300 hover:text-white transition">مکمل ادا</button>
+                    </div>
+
+                    <!-- Mark all paid button -->
+                    <button onclick="markAllFlatsPaid()" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold py-1.5 px-2.5 rounded-lg transition" title="سب فلیٹس کو مکمل ادا شدہ درج کریں">✓ سب ادا</button>
+                </div>
+            </div>
+
+            <!-- Table -->
+            <div class="overflow-x-auto">
+                <table class="w-full text-right text-sm">
+                    <thead class="bg-slate-100 text-slate-700 border-b border-slate-200 text-xs font-bold uppercase tracking-wider">
+                        <tr>
+                            <th class="p-3 text-center w-12">#</th>
+                            <th class="p-3 text-center w-20">فلیٹ</th>
+                            <th class="p-3">رہائشی کا نام</th>
+                            <th class="p-3 text-center w-28">ماہانہ واجب</th>
+                            <th class="p-3 text-center w-36">وصول شدہ رقم (ادائیگی)</th>
+                            <th class="p-3 text-center w-28">باقی بقایا</th>
+                            <th class="p-3 text-center w-28">اسٹیٹس</th>
+                            <th class="p-3 text-center w-28 no-print">فوری ایکشن</th>
+                        </tr>
+                    </thead>
+                    <tbody id="wusooliTableBody" class="divide-y divide-slate-100">
+                        <!-- Injected via JavaScript -->
+                    </tbody>
+                    <tfoot class="bg-blue-50 font-bold border-t-2 border-slate-300 text-slate-900 text-sm">
+                        <tr>
+                            <td colspan="3" class="p-3 text-center font-extrabold text-blue-950">کُل میزان (Total Recovery)</td>
+                            <td id="footWusooliTotalDue" class="p-3 text-center text-slate-700 font-extrabold">-</td>
+                            <td id="footWusooliTotalPaid" class="p-3 text-center text-emerald-800 font-extrabold text-base">-</td>
+                            <td id="footWusooliTotalArr" class="p-3 text-center text-rose-700 font-extrabold text-base">-</td>
+                            <td colspan="2" class="p-3 text-center text-xs text-slate-500 font-medium" id="footWusooliPercent">-</td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- ============================================================== -->
+    <!-- VIEW 2: 📊 فائنل سمری و اخراجات شیٹ (FINAL EXECUTIVE DASHBOARD)  -->
+    <!-- ============================================================== -->
+    <div id="panel-final" class="tab-panel fade-in hidden space-y-4">
+
+        <!-- 4 EXECUTIVE KPI CARDS -->
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4">
+            <!-- TOTAL COLLECTED -->
+            <div class="bg-emerald-50/90 border border-emerald-300 rounded-2xl p-4 text-center shadow-sm relative overflow-hidden">
+                <span class="text-xs sm:text-sm font-bold text-emerald-800 flex items-center justify-center gap-1">
+                    <span>💰</span> کُل وصول شدہ مینٹیننس
+                </span>
+                <div id="kpiCollected" class="text-xl sm:text-2xl lg:text-3xl font-extrabold text-emerald-700 mt-1">-</div>
+                <div id="kpiCollectedSub" class="text-xs text-emerald-600 font-medium mt-0.5">-</div>
+            </div>
+
+            <!-- TOTAL OUTSTANDING -->
+            <div class="bg-rose-50/90 border border-rose-300 rounded-2xl p-4 text-center shadow-sm relative overflow-hidden">
+                <span class="text-xs sm:text-sm font-bold text-rose-800 flex items-center justify-center gap-1">
+                    <span>⚠️</span> کُل بقایا جات (Arrears)
+                </span>
+                <div id="kpiArrears" class="text-xl sm:text-2xl lg:text-3xl font-extrabold text-rose-700 mt-1">-</div>
+                <div id="kpiArrearsSub" class="text-xs text-rose-600 font-medium mt-0.5">-</div>
+            </div>
+
+            <!-- TOTAL EXPENSES -->
+            <div class="bg-amber-50/90 border border-amber-300 rounded-2xl p-4 text-center shadow-sm relative overflow-hidden">
+                <span class="text-xs sm:text-sm font-bold text-amber-800 flex items-center justify-center gap-1">
+                    <span>📉</span> کُل بلڈنگ اخراجات
+                </span>
+                <div id="kpiExpenses" class="text-xl sm:text-2xl lg:text-3xl font-extrabold text-amber-700 mt-1">-</div>
+                <div id="kpiExpensesSub" class="text-xs text-amber-600 font-medium mt-0.5">-</div>
+            </div>
+
+            <!-- CLOSING BALANCE -->
+            <div class="bg-indigo-50/90 border border-indigo-300 rounded-2xl p-4 text-center shadow-sm relative overflow-hidden">
+                <span class="text-xs sm:text-sm font-bold text-indigo-800 flex items-center justify-center gap-1">
+                    <span>🏦</span> حتمی کیش بیلنس (Closing)
+                </span>
+                <div id="kpiClosing" class="text-xl sm:text-2xl lg:text-3xl font-extrabold text-indigo-800 mt-1">-</div>
+                <div id="kpiClosingSub" class="text-xs text-indigo-600 font-medium mt-0.5">پچھلی بچت شامل کر کے</div>
+            </div>
+        </div>
+
+        <!-- STATUS SUMMARY BANNER -->
+        <div id="statusBanner" class="bg-white border border-slate-300 rounded-xl py-2.5 px-4 text-center text-xs sm:text-sm font-semibold text-slate-700 shadow-sm">
+            -
+        </div>
+
+        <!-- DUAL-PANE FINAL REGISTER (EXACT REGISTER VIEW) -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-4">
+            <!-- Flats Table (Cols 7) -->
+            <div class="lg:col-span-7 bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+                <div class="bg-slate-800 text-white px-4 py-3 flex items-center justify-between">
+                    <h2 class="font-bold text-sm sm:text-base flex items-center gap-2">
+                        <span>🏢</span> فلیٹس اور مینٹیننس وصولی
+                    </h2>
+                    <span class="text-xs bg-slate-700 text-slate-300 px-2.5 py-0.5 rounded-full" id="dashFlatsCountBadge">20 فلیٹس</span>
+                </div>
+
+                <div class="overflow-x-auto">
+                    <table class="w-full text-right text-sm">
+                        <thead class="bg-slate-100 text-slate-700 border-b border-slate-200 text-xs font-bold uppercase tracking-wider">
+                            <tr>
+                                <th class="p-2.5 text-center w-10">نمبر</th>
+                                <th class="p-2.5 text-center w-16">فلیٹ</th>
+                                <th class="p-2.5">رہائشی کا نام</th>
+                                <th class="p-2.5 text-center w-28">مینٹیننس</th>
+                                <th class="p-2.5 text-center w-24">بقایا رقم</th>
+                            </tr>
+                        </thead>
+                        <tbody id="finalFlatsTableBody" class="divide-y divide-slate-100"></tbody>
+                        <tfoot class="bg-blue-50 font-bold border-t-2 border-slate-400 text-slate-900">
+                            <tr>
+                                <td colspan="3" class="p-3 text-center text-blue-950 font-extrabold">کُل میزان (Total)</td>
+                                <td id="totalMaintFooter" class="p-3 text-center text-emerald-800 text-base font-extrabold">-</td>
+                                <td id="totalArrearsFooter" class="p-3 text-center text-rose-700 text-base font-extrabold">-</td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Expenses & Accounting Summary (Cols 5) -->
+            <div class="lg:col-span-5 bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden flex flex-col justify-between">
+                <div>
+                    <div class="bg-slate-800 text-white px-4 py-3 flex items-center justify-between">
+                        <h2 class="font-bold text-sm sm:text-base flex items-center gap-2">
+                            <span>🧾</span> بلڈنگ کے ماہانہ اخراجات
+                        </h2>
+                        <span id="finalExpCountBadge" class="text-xs bg-slate-700 text-slate-300 px-2.5 py-0.5 rounded-full">-</span>
+                    </div>
+
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-right text-sm">
+                            <thead class="bg-slate-100 text-slate-700 border-b border-slate-200 text-xs font-bold uppercase">
+                                <tr>
+                                    <th class="p-2.5">اخراجات کی تفصیل</th>
+                                    <th class="p-2.5 text-center w-28">رقم (روپے)</th>
+                                    <th class="p-2.5 text-xs text-slate-500">تفصیلات / تاریخ</th>
+                                </tr>
+                            </thead>
+                            <tbody id="finalExpensesTableBody" class="divide-y divide-slate-100"></tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- CASH FLOW ACCOUNTING FOOTER BOX -->
+                <div class="p-4 bg-slate-50 border-t border-slate-200 space-y-2 text-sm">
+                    <div class="flex justify-between items-center py-1 border-b border-slate-200">
+                        <span class="font-bold text-rose-800 flex items-center gap-1"><span>📉</span> کُل اخراجات:</span>
+                        <span id="boxTotalExp" class="font-extrabold text-rose-700 text-base">-</span>
+                    </div>
+                    <div class="flex justify-between items-center py-1 border-b border-slate-200">
+                        <span class="font-semibold text-slate-600 flex items-center gap-1"><span>🏦</span> پچھلی بچت (Opening Cash):</span>
+                        <span id="boxPrevSavings" class="font-bold text-slate-800">-</span>
+                    </div>
+                    <div class="flex justify-between items-center py-1.5 bg-emerald-100/70 px-3 rounded-lg border border-emerald-300">
+                        <span class="font-extrabold text-emerald-900 flex items-center gap-1"><span>💵</span> حتمی بچت (Closing Cash):</span>
+                        <span id="boxClosingSavings" class="font-extrabold text-emerald-800 text-lg">-</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- ============================================================== -->
+    <!-- VIEW 3: 🧾 اخراجات داخل کریں (EXPENSES MANAGEMENT)           -->
+    <!-- ============================================================== -->
+    <div id="panel-expenses" class="tab-panel fade-in hidden space-y-4">
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+            <div class="bg-amber-800 text-white p-4 flex items-center justify-between">
+                <h2 class="font-bold text-sm sm:text-base flex items-center gap-2">
+                    <span>🧾</span> بلڈنگ کے ماہانہ اخراجات داخل کریں
+                </h2>
+                <span class="text-xs bg-amber-700 text-amber-100 px-3 py-1 rounded-full font-bold" id="expenseSummaryBadge">-</span>
+            </div>
+
+            <div class="p-4 sm:p-5 space-y-4">
+                <!-- Add New Expense Box -->
+                <div class="bg-amber-50/80 p-4 rounded-xl border border-amber-200 space-y-3">
+                    <div class="flex items-center justify-between">
+                        <h3 class="font-bold text-amber-950 text-sm flex items-center gap-1.5">
+                            <span>➕</span> نیا خرچہ درج کریں
+                        </h3>
+                        <span class="text-[11px] text-amber-800 font-medium">💡 رومن میں لکھیں (مثلاً bijli ka bill, motor operator, jamadar) خود اردو بن جائے گا</span>
+                    </div>
+                    <div class="grid grid-cols-1 sm:grid-cols-12 gap-2.5">
+                        <div class="sm:col-span-5">
+                            <input type="text" id="newExpName" placeholder="خرچے کا نام (مثلاً bijli ka bill, plumber)..." class="urdu-input w-full py-2.5 px-3 rounded-xl border border-amber-300 focus:border-amber-600 focus:outline-none text-sm font-semibold">
+                        </div>
+                        <div class="sm:col-span-3">
+                            <input type="number" id="newExpAmount" placeholder="رقم (روپے)..." class="w-full py-2.5 px-3 rounded-xl border border-amber-300 focus:border-amber-600 focus:outline-none text-sm font-bold text-center">
+                        </div>
+                        <div class="sm:col-span-4 flex gap-2">
+                            <input type="text" id="newExpDetails" placeholder="تفصیل / تاریخ (اختیاری)..." class="urdu-input flex-1 py-2.5 px-3 rounded-xl border border-amber-300 focus:border-amber-600 focus:outline-none text-xs">
+                            <button onclick="addNewExpense()" class="bg-amber-700 hover:bg-amber-800 text-white font-bold py-2 px-4 rounded-xl text-xs sm:text-sm transition whitespace-nowrap shadow-sm">
+                                ➕ شامل کریں
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Existing Expenses List -->
+                <div class="space-y-2" id="expensesEditableList">
+                    <!-- Injected via JavaScript -->
+                </div>
+
+                <!-- Expenses Total Card -->
+                <div class="bg-slate-900 text-white p-3.5 rounded-xl flex items-center justify-between text-sm sm:text-base font-bold">
+                    <span>📉 کل بلڈنگ اخراجات (Total Expenses):</span>
+                    <span id="expTotalHeading" class="text-amber-400 font-extrabold text-lg sm:text-xl">Rs. 0</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================================== -->
+    <!-- VIEW 4: ⚙️ فلیٹ سیٹنگز اور بلڈنگ انفارمیشن (SETTINGS)         -->
+    <!-- ============================================================== -->
+    <div id="panel-settings" class="tab-panel fade-in hidden space-y-4">
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+            <div class="bg-slate-800 text-white p-4">
+                <h2 class="font-bold text-sm sm:text-base flex items-center gap-2">
+                    <span>⚙️</span> بلڈنگ سیٹنگز اور 20 فلیٹس کی معلومات
+                </h2>
+            </div>
+
+            <div class="p-4 sm:p-5 space-y-5">
+                <!-- Building Info -->
+                <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 space-y-3">
+                    <h3 class="font-bold text-slate-900 text-sm">🏢 بنیادی معلومات</h3>
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                        <div class="sm:col-span-2">
+                            <label class="block text-xs font-bold text-slate-600 mb-1">بلڈنگ کا نام:</label>
+                            <input type="text" id="setBuildingName" onchange="updateSetting('buildingName', this.value)" class="w-full py-2 px-3 rounded-lg border border-slate-300 font-bold text-sm">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-600 mb-1">پچھلی بچت (Opening Cash):</label>
+                            <input type="number" id="setPrevBalance" onchange="updateMonthPrevBalance(this.value)" class="w-full py-2 px-3 rounded-lg border border-slate-300 font-bold text-sm text-center">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Flat Register Table -->
+                <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 space-y-3">
+                    <div class="flex items-center justify-between">
+                        <h3 class="font-bold text-slate-900 text-sm">🏢 تمام فلیٹس کا مستقل رجسٹر (نام و ڈیفالٹ واجبات)</h3>
+                        <button onclick="addNewFlatPrompt()" class="bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold py-1.5 px-3 rounded-lg transition">+ نیا یونٹ شامل کریں</button>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-right text-xs sm:text-sm">
+                            <thead class="bg-slate-200 text-slate-700 font-bold">
+                                <tr>
+                                    <th class="p-2 text-center w-12">#</th>
+                                    <th class="p-2 text-center w-24">فلیٹ نمبر</th>
+                                    <th class="p-2">رہائشی کا نام (رومن میں لکھیں خود اردو بن جائے گا)</th>
+                                    <th class="p-2 text-center w-32">ماہانہ واجب (روپے)</th>
+                                    <th class="p-2 text-center w-36">واٹس ایپ نمبر</th>
+                                    <th class="p-2 text-center w-16">حذف</th>
+                                </tr>
+                            </thead>
+                            <tbody id="flatRegisterBody" class="divide-y divide-slate-200"></tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Reset Area -->
+                <div class="bg-rose-50 p-4 rounded-xl border border-rose-200 flex flex-wrap items-center justify-between gap-3">
+                    <div>
+                        <h4 class="font-bold text-rose-900 text-sm">⚠️ موجودہ مہینہ حذف کریں یا ری سیٹ کریں</h4>
+                        <p class="text-xs text-rose-700 mt-0.5">اگر مہینہ غلط بن گیا ہو تو یہاں سے ڈیلیٹ کر سکتے ہیں۔</p>
+                    </div>
+                    <button onclick="deleteCurrentMonth()" class="bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold py-2 px-3.5 rounded-lg transition">🗑️ موجودہ مہینہ حذف کریں</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- 5. NEW MONTH MODAL                         -->
+    <!-- ========================================== -->
+    <div id="newMonthModal" class="fixed inset-0 bg-black/60 z-50 flex items-center justify-center hidden no-print p-4">
+        <div class="bg-white rounded-2xl shadow-2xl p-6 w-full max-w-sm space-y-4">
+            <h3 class="font-extrabold text-slate-900 text-lg text-center flex items-center justify-center gap-2">
+                <span>📅</span> نیا مہینہ بنائیں
+            </h3>
+            
+            <!-- Month & Year Dropdown Selection -->
+            <div>
+                <label class="block text-xs font-bold text-slate-700 mb-1.5">مہینہ اور سال منتخب کریں (Select Month & Year):</label>
+                <div class="grid grid-cols-3 gap-2">
+                    <select id="modalMonthSelect" onchange="onModalMonthChange()" class="col-span-2 bg-slate-50 hover:bg-slate-100 py-2.5 px-3 rounded-xl border-2 border-blue-500 font-extrabold text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-600 transition cursor-pointer">
+                        <option value="JANUARY" data-urdu="جنوری">جنوری (January)</option>
+                        <option value="FEBRUARY" data-urdu="فروری">فروری (February)</option>
+                        <option value="MARCH" data-urdu="مارچ">مارچ (March)</option>
+                        <option value="APRIL" data-urdu="اپریل">اپریل (April)</option>
+                        <option value="MAY" data-urdu="مئی">مئی (May)</option>
+                        <option value="JUNE" data-urdu="جون">جون (June)</option>
+                        <option value="JULY" data-urdu="جولائی">جولائی (July)</option>
+                        <option value="AUGUST" data-urdu="اگست">اگست (August)</option>
+                        <option value="SEPTEMBER" data-urdu="ستمبر">ستمبر (September)</option>
+                        <option value="OCTOBER" data-urdu="اکتوبر">اکتوبر (October)</option>
+                        <option value="NOVEMBER" data-urdu="نومبر">نومبر (November)</option>
+                        <option value="DECEMBER" data-urdu="دسمبر">دسمبر (December)</option>
+                    </select>
+                    <select id="modalYearSelect" onchange="onModalMonthChange()" class="col-span-1 bg-slate-50 hover:bg-slate-100 py-2.5 px-2 rounded-xl border-2 border-slate-300 font-extrabold text-sm text-center text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-600 transition cursor-pointer" dir="ltr">
+                        <option value="2026">2026</option>
+                        <option value="2027">2027</option>
+                        <option value="2028">2028</option>
+                        <option value="2029">2029</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Auto-generated Sheet Name Display -->
+            <div class="bg-blue-50 border border-blue-200 rounded-xl p-2.5 flex items-center justify-between text-xs">
+                <span class="text-blue-700 font-bold">شیٹ کا نام (Excel Sheet):</span>
+                <span id="modalPreviewKey" class="font-extrabold text-blue-950 font-mono px-2 py-0.5 bg-white rounded border border-blue-200" dir="ltr">OCTOBER</span>
+            </div>
+
+            <!-- Date Input -->
+            <div>
+                <label class="block text-xs font-bold text-slate-700 mb-1">تاریخ کا اندراج (Date):</label>
+                <input type="text" id="modalMonthDate" class="w-full py-2 px-3 rounded-xl border border-slate-300 font-bold text-sm focus:border-blue-600 focus:outline-none text-center" dir="ltr">
+            </div>
+
+            <!-- Previous Cash Balance -->
+            <div>
+                <label class="block text-xs font-bold text-slate-700 mb-1">پچھلی بچت (Opening Cash Balance):</label>
+                <input type="number" id="modalMonthBalance" placeholder="Rs." class="w-full py-2.5 px-3 rounded-xl border-2 border-indigo-200 font-extrabold text-sm focus:border-indigo-600 focus:outline-none text-center text-indigo-950 bg-indigo-50/40">
+                <p id="modalBalanceHint" class="text-[11px] text-blue-700 mt-1 text-center font-bold"></p>
+            </div>
+
+            <div class="flex gap-2 pt-1">
+                <button onclick="confirmCreateNewMonth()" class="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-bold py-2.5 rounded-xl text-sm transition shadow-sm flex items-center justify-center gap-1.5">
+                    <span>✅</span> مہینہ بنائیں
+                </button>
+                <button onclick="closeNewMonthModal()" class="flex-1 bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold py-2.5 rounded-xl text-sm transition">منسوخ</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- 6. FLOATING TOAST NOTIFICATION             -->
+    <!-- ========================================== -->
+    <div id="toast" class="no-print fixed bottom-5 left-1/2 -translate-x-1/2 bg-slate-900 text-white text-xs sm:text-sm py-2.5 px-5 rounded-full shadow-2xl opacity-0 transition-opacity duration-300 pointer-events-none z-50 flex items-center gap-2">
+        <span id="toastIcon">✅</span>
+        <span id="toastMsg">محفوظ ہو گیا!</span>
+    </div>
+
+</div>
+
+<!-- ============================================================== -->
+<!-- JAVASCRIPT: LOGIC, ROMAN-TO-URDU, EXCEL EXPORT, PERSISTENCE   -->
+<!-- ============================================================== -->
+<script>
+// ================================================================
+// A. ROMAN TO URDU TRANSLITERATION ENGINE
+// ================================================================
+let romanUrduEnabled = true;
+
+const romanUrduDictionary = {
+    // Common Building / Maintenance words
+    'bijli': 'بجلی', 'bil': 'بل', 'bill': 'بل', 'ka': 'کا', 'ki': 'کی', 'ke': 'کے', 'ko': 'کو', 'se': 'سے', 'par': 'پر', 'mein': 'میں', 'mai': 'میں',
+    'motor': 'موٹر', 'motar': 'موٹر', 'operator': 'آپریٹر', 'jamadar': 'جمعدار', 'safai': 'صفائی', 'kachra': 'کچرا',
+    'electrician': 'الیکٹریشن', 'usama': 'اسامہ', 'plumber': 'پلمبر', 'bulb': 'بلب',
+    'pump': 'پمپ', 'marammat': 'مرمت', 'tabdeeli': 'تبدیلی', 'board': 'بورڈ', 'lights': 'لائٹس', 'light': 'لائٹ',
+    'floor': 'فلور', 'manzil': 'منزل', 'chothi': 'چوتھی', 'tanki': 'ٹینکی', 'tanker': 'ٹینکر', 'pani': 'پانی',
+    'chowkidar': 'چوکیدار', 'gate': 'گیٹ', 'tala': 'تالا', 'rang': 'رنگ', 'chuna': 'چونا', 'pipe': 'پائپ',
+    'loha': 'لوہا', 'taar': 'تار', 'sewerage': 'سیوریج', 'gutter': 'گٹر', 'repair': 'مرمت',
+
+    // Resident Names
+    'anjum': 'انجم', 'parvez': 'پرویز', 'pervez': 'پرویز', 'rashid': 'راشد', 'farid': 'فرید', 'fareed': 'فرید',
+    'subhan': 'سبحان', 'sikandar': 'سکندر', 'ibrahim': 'ابراہیم', 'naveed': 'نوید', 'navid': 'نوید',
+    'imran': 'عمران', 'nadeem': 'ندیم', 'nadim': 'ندیم', 'jibran': 'جبران', 'jubran': 'جبران', 'kamran': 'کامران',
+    'abdul': 'عبدال', 'aleem': 'علیم', 'alim': 'علیم', 'hafiz': 'حافظ', 'saad': 'سعد',
+    'hanif': 'حنیف', 'haneef': 'حنیف', 'abu': 'ابو', 'muhammad': 'محمد', 'mohammad': 'محمد',
+    'ali': 'علی', 'abid': 'عابد', 'aabid': 'عابد', 'dukandar': 'دکاندار', 'shopkeeper': 'دکاندار',
+
+    // Status & Financial words
+    'ghar': 'گھر', 'band': 'بند', 'hai': 'ہے', 'baqaya': 'بقایا', 'wusool': 'وصول', 'wusooli': 'وصولی',
+    'ada': 'ادا', 'shuda': 'شدہ', 'kul': 'کل', 'kharcha': 'خرچہ', 'kharch': 'خرچ', 'bachat': 'بچت',
+    'september': 'ستمبر', 'august': 'اگست', 'july': 'جولائی', 'october': 'اکتوبر', 'november': 'نومبر', 'december': 'دسمبر',
+    'january': 'جنوری', 'february': 'فروری', 'march': 'مارچ', 'april': 'اپریل', 'may': 'مئی', 'june': 'جون'
+};
+
+const phoneticRules = [
+    ['kh', 'خ'], ['gh', 'غ'], ['sh', 'ش'], ['ch', 'چ'], ['th', 'تھ'], ['ph', 'پھ'],
+    ['dh', 'دھ'], ['bh', 'بھ'], ['jh', 'جھ'], ['rh', 'ڑھ'], ['aa', 'آ'], ['ee', 'ی'],
+    ['oo', 'و'], ['ai', 'ئے'], ['au', 'ئو'],
+    ['a', 'ا'], ['b', 'ب'], ['p', 'پ'], ['t', 'ت'], ['T', 'ٹ'], ['j', 'ج'],
+    ['d', 'د'], ['D', 'ڈ'], ['r', 'ر'], ['R', 'ڑ'], ['z', 'ز'], ['s', 'س'],
+    ['f', 'ف'], ['q', 'ق'], ['k', 'ک'], ['g', 'گ'], ['l', 'ل'], ['m', 'م'],
+    ['n', 'ن'], ['w', 'و'], ['v', 'و'], ['h', 'ہ'], ['y', 'ی'], ['i', 'ی'],
+    ['o', 'و'], ['u', 'و'], ['e', 'ے']
+];
+
+function transliterateWord(w) {
+    if (!w) return '';
+    const clean = w.toLowerCase().replace(/[^a-z]/g, '');
+    if (romanUrduDictionary[clean]) return romanUrduDictionary[clean];
+    
+    // Phonetic fallback
+    let res = '';
+    let i = 0;
+    while (i < w.length) {
+        let matched = false;
+        for (const [rom, urd] of phoneticRules) {
+            if (w.substr(i, rom.length).toLowerCase() === rom.toLowerCase()) {
+                res += urd;
+                i += rom.length;
+                matched = true;
+                break;
+            }
+        }
+        if (!matched) {
+            res += w[i];
+            i++;
+        }
+    }
+    return res;
+}
+
+function convertTextRomanToUrdu(text) {
+    if (!text || !romanUrduEnabled) return text;
+    // Split on spaces and punctuation but keep spaces
+    const parts = text.split(/(\s+)/);
+    return parts.map(part => {
+        if (/^\s+$/.test(part)) return part;
+        // Don't translate if already Urdu or numbers
+        if (/[\u0600-\u06FF0-9]/.test(part)) return part;
+        // Don't translate codes like G-1, F-2, 11-SEP
+        if (/^[A-Za-z]-[0-9]+$/.test(part) || /^[0-9]+-[A-Za-z]+$/.test(part)) return part;
+        return transliterateWord(part);
+    }).join('');
+}
+
+function toggleRomanUrdu() {
+    romanUrduEnabled = !romanUrduEnabled;
+    const indicator = document.getElementById('romanUrduIndicator');
+    const label = document.getElementById('romanUrduLabel');
+    if (romanUrduEnabled) {
+        indicator.className = 'w-2.5 h-2.5 rounded-full bg-emerald-400 inline-block animate-pulse';
+        label.innerText = '🔤 رومن تا اردو: آن';
+        showToast('رومن تا اردو آٹو کنورٹ آن ہے! (ٹائپ کر کے اسپیس دبائیں)');
+    } else {
+        indicator.className = 'w-2.5 h-2.5 rounded-full bg-slate-400 inline-block';
+        label.innerText = '🔤 رومن تا اردو: آف';
+        showToast('رومن تا اردو بند کر دیا گیا ہے۔');
+    }
+}
+
+// Attach listener to all inputs with class .urdu-input
+document.addEventListener('keyup', (e) => {
+    if (!romanUrduEnabled) return;
+    const target = e.target;
+    if (target && target.classList && target.classList.contains('urdu-input')) {
+        if (e.key === ' ' || e.key === 'Enter') {
+            const converted = convertTextRomanToUrdu(target.value);
+            if (converted !== target.value) {
+                target.value = converted;
+                target.dispatchEvent(new Event('input', { bubbles: true }));
+            }
+        }
+    }
+});
+
+// ================================================================
+// B. DATA STORE & LOCAL STORAGE
+// ================================================================
+const STORAGE_KEY = 'almustafa_maint_system_v3';
+
+function getDefaultMasterData() {
+    return {
+        buildingName: 'AL MUSTAFA HEIGHTS 5-E-18/19',
+        flats: [
+            { sno: 1, flat: 'G-1', name: 'انجم پرویز', due: 3000, phone: '' },
+            { sno: 2, flat: 'G-2', name: 'راشد', due: 3000, phone: '' },
+            { sno: 3, flat: 'G-3', name: 'فرید', due: 2500, phone: '' },
+            { sno: 4, flat: 'F-1', name: 'سبحان', due: 2500, phone: '' },
+            { sno: 5, flat: 'F-2', name: 'سکندر', due: 3000, phone: '' },
+            { sno: 6, flat: 'F-3', name: 'ابراہیم', due: 3000, phone: '' },
+            { sno: 7, flat: 'F-4', name: 'نوید', due: 2500, phone: '' },
+            { sno: 8, flat: 'S-1', name: 'عمران', due: 3000, phone: '' },
+            { sno: 9, flat: 'S-2', name: 'پرویز', due: 3000, phone: '' },
+            { sno: 10, flat: 'S-3', name: 'ندیم', due: 3000, phone: '' },
+            { sno: 11, flat: 'S-4', name: 'جبران', due: 3000, phone: '' },
+            { sno: 12, flat: 'T-1', name: 'کامران', due: 3000, phone: '' },
+            { sno: 13, flat: 'T-2', name: 'عبدالعلیم', due: 3000, phone: '' },
+            { sno: 14, flat: 'T-3', name: 'حافظ سعد', due: 3000, phone: '' },
+            { sno: 15, flat: 'T-4', name: 'عمران', due: 3000, phone: '' },
+            { sno: 16, flat: 'P-1', name: 'حنیف', due: 3000, phone: '' },
+            { sno: 17, flat: 'P-2', name: 'ابو محمد', due: 3000, phone: '' },
+            { sno: 18, flat: 'P-3', name: 'علی', due: 3000, phone: '' },
+            { sno: 19, flat: 'P-4', name: 'عابد', due: 3000, phone: '' },
+            { sno: 20, flat: 'Shop', name: 'دکاندار', due: 500, phone: '' }
+        ],
+        months: {
+            'SEPTEMBER': {
+                name: 'ستمبر 2026 (September)',
+                year: 2026,
+                dateStr: '3-Oct-2026',
+                prevSavings: 21711,
+                flatsData: {
+                    'G-1': { maint: 3000, arrears: null, note: '' },
+                    'G-2': { maint: 3000, arrears: null, note: '' },
+                    'G-3': { maint: 2500, arrears: null, note: '' },
+                    'F-1': { maint: 2500, arrears: null, note: '' },
+                    'F-2': { maint: 3000, arrears: null, note: '' },
+                    'F-3': { maint: 3000, arrears: 3000, note: '3,000 بقایا' },
+                    'F-4': { maint: 2500, arrears: null, note: '' },
+                    'S-1': { maint: 3000, arrears: null, note: '' },
+                    'S-2': { maint: 3000, arrears: null, note: '' },
+                    'S-3': { maint: 2500, arrears: 500, note: '500 بقایا' },
+                    'S-4': { maint: 3000, arrears: null, note: '' },
+                    'T-1': { maint: 3000, arrears: null, note: '' },
+                    'T-2': { maint: 3000, arrears: null, note: '' },
+                    'T-3': { maint: 3000, arrears: null, note: '' },
+                    'T-4': { maint: 3000, arrears: null, note: '' },
+                    'P-1': { maint: 3000, arrears: null, note: '' },
+                    'P-2': { maint: 3000, arrears: null, note: '' },
+                    'P-3': { maint: 'گھر بند ہے', arrears: null, note: 'گھر بند ہے' },
+                    'P-4': { maint: 3000, arrears: 3000, note: '3,000 بقایا' },
+                    'Shop': { maint: 500, arrears: null, note: '' }
+                },
+                expenses: [
+                    { desc: 'بجلی کا بل', amount: 18890, details: '' },
+                    { desc: 'موٹر آپریٹر ', amount: 1500, details: '' },
+                    { desc: 'جمعدار', amount: 4500, details: '' },
+                    { desc: 'الیکٹریشن (اسامہ)', amount: 7600, details: '11-SEP , 19-SEP (4100+3500)' },
+                    { desc: 'پمپ کے اخراجات', amount: 26000, details: '' },
+                    { desc: 'پلمبر کے اخراجات', amount: 1560, details: '' },
+                    { desc: 'چوتھی منزل کا بلب', amount: 130, details: '' }
+                ]
+            },
+            'AUGUST': {
+                name: 'اگست 2026 (August)',
+                year: 2026,
+                dateStr: '6-Sep-2026',
+                prevSavings: 65976,
+                flatsData: {
+                    'G-1': { maint: 3000, arrears: null, note: '' },
+                    'G-2': { maint: 3000, arrears: null, note: '' },
+                    'G-3': { maint: 2500, arrears: null, note: '' },
+                    'F-1': { maint: 2500, arrears: null, note: '' },
+                    'F-2': { maint: 3000, arrears: null, note: '' },
+                    'F-3': { maint: 0, arrears: 3000, note: 'غیر ادا' },
+                    'F-4': { maint: 2500, arrears: null, note: '' },
+                    'S-1': { maint: 3000, arrears: null, note: '' },
+                    'S-2': { maint: 3000, arrears: null, note: '' },
+                    'S-3': { maint: 3000, arrears: null, note: '' },
+                    'S-4': { maint: 3000, arrears: null, note: '' },
+                    'T-1': { maint: 3000, arrears: null, note: '' },
+                    'T-2': { maint: 3000, arrears: null, note: '' },
+                    'T-3': { maint: 3000, arrears: null, note: '' },
+                    'T-4': { maint: 3000, arrears: null, note: '' },
+                    'P-1': { maint: 3000, arrears: null, note: '' },
+                    'P-2': { maint: 3000, arrears: null, note: '' },
+                    'P-3': { maint: 'گھر بند ہے', arrears: null, note: 'گھر بند ہے' },
+                    'P-4': { maint: 3000, arrears: 3000, note: 'بقایا' },
+                    'Shop': { maint: 500, arrears: null, note: '' }
+                },
+                expenses: [
+                    { desc: 'بجلی کا بل', amount: 30685, details: 'یکم اگست سے انجم انکل نے موٹر چلائی' },
+                    { desc: 'موٹر آپریٹر ', amount: 0, details: '-' },
+                    { desc: 'جمعدار', amount: 4500, details: '' },
+                    { desc: 'پمپ کی تبدیلی', amount: 34080, details: '33780+300' },
+                    { desc: 'پمپ کی مرمت', amount: 7000, details: '' },
+                    { desc: 'بورڈ', amount: 14000, details: '' },
+                    { desc: 'موٹر', amount: 4000, details: '' }
+                ]
+            },
+            'JULY': {
+                name: 'جولائی 2026 (July)',
+                year: 2026,
+                dateStr: '6-Sep-2026',
+                prevSavings: 60776,
+                flatsData: {
+                    'G-1': { maint: 3000, arrears: null, note: '' },
+                    'G-2': { maint: 3000, arrears: null, note: '' },
+                    'G-3': { maint: 2500, arrears: null, note: '' },
+                    'F-1': { maint: 2500, arrears: null, note: '' },
+                    'F-2': { maint: 3000, arrears: null, note: '' },
+                    'F-3': { maint: 3000, arrears: null, note: '' },
+                    'F-4': { maint: 2500, arrears: null, note: '' },
+                    'S-1': { maint: 3000, arrears: null, note: '' },
+                    'S-2': { maint: 3000, arrears: null, note: '' },
+                    'S-3': { maint: 3000, arrears: null, note: '' },
+                    'S-4': { maint: 3000, arrears: null, note: '' },
+                    'T-1': { maint: 3000, arrears: null, note: '' },
+                    'T-2': { maint: 3000, arrears: null, note: '' },
+                    'T-3': { maint: 3000, arrears: null, note: '' },
+                    'T-4': { maint: 3000, arrears: null, note: '' },
+                    'P-1': { maint: 3000, arrears: null, note: '' },
+                    'P-2': { maint: 3000, arrears: null, note: '' },
+                    'P-3': { maint: 'گھر بند ہے', arrears: null, note: 'گھر بند ہے' },
+                    'P-4': { maint: 10000, arrears: 3000, note: 'پچھلے بقایا سمیت' },
+                    'Shop': { maint: 500, arrears: null, note: '' }
+                },
+                expenses: [
+                    { desc: 'بجلی کا بل', amount: 34300, details: 'یکم اگست سے انجم انکل نے موٹر چلائی' },
+                    { desc: 'موٹر آپریٹر ', amount: 3000, details: '' },
+                    { desc: 'جمعدار', amount: 4500, details: '' },
+                    { desc: 'فلو ر کی لائٹس', amount: 6500, details: '' },
+                    { desc: 'موٹر', amount: 6500, details: '' }
+                ]
+            }
+        },
+        monthOrder: ['SEPTEMBER', 'AUGUST', 'JULY']
+    };
+}
+
+function loadAppData() {
+    const saved = localStorage.getItem(STORAGE_KEY);
+    if (saved) {
+        try {
+            return JSON.parse(saved);
+        } catch (e) {
+            console.error('Error loading data:', e);
+        }
+    }
+    return getDefaultMasterData();
+}
+
+function saveAppData() {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(appData));
+}
+
+let appData = loadAppData();
+let currentMonthKey = appData.monthOrder[0] || 'SEPTEMBER';
+let currentTab = 'wusooli';
+let currentWusooliFilter = 'all';
+
+// ================================================================
+// C. HELPERS & FORMATTING
+// ================================================================
+function formatRs(n) {
+    if (n === null || n === undefined || isNaN(n)) return '-';
+    return 'Rs. ' + Number(n).toLocaleString('en-US');
+}
+
+function showToast(msg, icon = '✅') {
+    const toast = document.getElementById('toast');
+    document.getElementById('toastMsg').innerText = msg;
+    document.getElementById('toastIcon').innerText = icon;
+    toast.classList.remove('opacity-0');
+    toast.classList.add('opacity-100');
+    setTimeout(() => {
+        toast.classList.remove('opacity-100');
+        toast.classList.add('opacity-0');
+    }, 2800);
+}
+
+function getCurrentMonthData() {
+    return appData.months[currentMonthKey];
+}
+
+// ================================================================
+// D. TAB SWITCHING
+// ================================================================
+function switchTab(tabId) {
+    currentTab = tabId;
+    ['wusooli', 'final', 'expenses', 'settings'].forEach(t => {
+        const panel = document.getElementById('panel-' + t);
+        const btn = document.getElementById('tab-' + t);
+        if (panel && btn) {
+            panel.classList.toggle('hidden', t !== tabId);
+            btn.classList.toggle('active', t === tabId);
+        }
+    });
+    renderActiveTab();
+}
+
+function switchMonth(key) {
+    currentMonthKey = key;
+    renderActiveTab();
+}
+
+// ================================================================
+// E. MONTH MANAGEMENT & MODAL
+// ================================================================
+function populateMonthSelect() {
+    const select = document.getElementById('monthSelect');
+    select.innerHTML = '';
+    appData.monthOrder.forEach(key => {
+        const m = appData.months[key];
+        if (!m) return;
+        const opt = document.createElement('option');
+        opt.value = key;
+        opt.textContent = m.name;
+        opt.selected = (key === currentMonthKey);
+        select.appendChild(opt);
+    });
+}
+
+const monthSequence = [
+    { key: 'JANUARY', urdu: 'جنوری', short: 'Jan', english: 'January' },
+    { key: 'FEBRUARY', urdu: 'فروری', short: 'Feb', english: 'February' },
+    { key: 'MARCH', urdu: 'مارچ', short: 'Mar', english: 'March' },
+    { key: 'APRIL', urdu: 'اپریل', short: 'Apr', english: 'April' },
+    { key: 'MAY', urdu: 'مئی', short: 'May', english: 'May' },
+    { key: 'JUNE', urdu: 'جون', short: 'Jun', english: 'June' },
+    { key: 'JULY', urdu: 'جولائی', short: 'Jul', english: 'July' },
+    { key: 'AUGUST', urdu: 'اگست', short: 'Aug', english: 'August' },
+    { key: 'SEPTEMBER', urdu: 'ستمبر', short: 'Sep', english: 'September' },
+    { key: 'OCTOBER', urdu: 'اکتوبر', short: 'Oct', english: 'October' },
+    { key: 'NOVEMBER', urdu: 'نومبر', short: 'Nov', english: 'November' },
+    { key: 'DECEMBER', urdu: 'دسمبر', short: 'Dec', english: 'December' }
+];
+
+function onModalMonthChange() {
+    const mSelect = document.getElementById('modalMonthSelect');
+    const ySelect = document.getElementById('modalYearSelect');
+    if (!mSelect || !ySelect) return;
+    
+    const mKey = mSelect.value;
+    const year = ySelect.value;
+    const mObj = monthSequence.find(m => m.key === mKey);
+    const shortName = mObj ? mObj.short : 'Day';
+
+    // Preview key
+    let finalKey = mKey;
+    if (appData.months[finalKey] && appData.months[finalKey].year != year) {
+        finalKey = `${mKey}_${year}`;
+    }
+    const previewEl = document.getElementById('modalPreviewKey');
+    if (previewEl) previewEl.innerText = finalKey;
+
+    // Auto-fill date
+    const dateInput = document.getElementById('modalMonthDate');
+    if (dateInput) {
+        dateInput.value = `3-${shortName}-${year}`;
+    }
+}
+
+function openNewMonthModal() {
+    document.getElementById('newMonthModal').classList.remove('hidden');
+
+    // Auto-detect next month in sequence based on current active month
+    let nextIdx = 9; // Default to October
+    let targetYear = 2026;
+
+    const currentIdx = monthSequence.findIndex(m => currentMonthKey.toUpperCase().includes(m.key));
+    if (currentIdx !== -1) {
+        if (currentIdx === 11) {
+            nextIdx = 0;
+            targetYear = (getCurrentMonthData()?.year || 2026) + 1;
+        } else {
+            nextIdx = currentIdx + 1;
+            targetYear = getCurrentMonthData()?.year || 2026;
+        }
+    }
+
+    const mSelect = document.getElementById('modalMonthSelect');
+    const ySelect = document.getElementById('modalYearSelect');
+    if (mSelect) mSelect.value = monthSequence[nextIdx].key;
+    if (ySelect) ySelect.value = String(targetYear);
+
+    onModalMonthChange();
+
+    // Auto-calculate closing cash of current month to suggest as opening
+    const stats = calculateMonthStats(currentMonthKey);
+    const suggestedBal = stats ? stats.closingSavings : 0;
+    document.getElementById('modalMonthBalance').value = suggestedBal;
+    document.getElementById('modalBalanceHint').innerText = `💡 سابقہ مہینے کی حتمی بچت: ${formatRs(suggestedBal)}`;
+}
+
+function closeNewMonthModal() {
+    document.getElementById('newMonthModal').classList.add('hidden');
+}
+
+function confirmCreateNewMonth() {
+    const mSelect = document.getElementById('modalMonthSelect');
+    const ySelect = document.getElementById('modalYearSelect');
+    const mKey = mSelect.value;
+    const year = parseInt(ySelect.value) || 2026;
+    const mObj = monthSequence.find(m => m.key === mKey);
+
+    // Determine unique key and formatted label
+    let key = mKey;
+    if (appData.months[key]) {
+        if (appData.months[key].year === year) {
+            alert(`مہینہ "${key} ${year}" پہلے سے موجود ہے! آپ اوپر ڈراپ ڈاؤن سے مہینہ تبدیل کر سکتے ہیں۔`);
+            return;
+        } else {
+            key = `${mKey}_${year}`;
+        }
+    }
+
+    const name = `${mObj.urdu} ${year} (${mObj.english})`;
+    const dateStr = document.getElementById('modalMonthDate').value.trim() || `3-${mObj.short}-${year}`;
+    const balance = parseInt(document.getElementById('modalMonthBalance').value) || 0;
+
+    // Initialize flats data from master flat register
+    const flatsData = {};
+    appData.flats.forEach(f => {
+        flatsData[f.flat] = { maint: 0, arrears: null, note: '' };
+    });
+
+    appData.months[key] = {
+        name: name,
+        year: year,
+        dateStr: dateStr,
+        prevSavings: balance,
+        flatsData: flatsData,
+        expenses: []
+    };
+    appData.monthOrder.unshift(key);
+    currentMonthKey = key;
+    saveAppData();
+    populateMonthSelect();
+    closeNewMonthModal();
+    switchTab('wusooli');
+    showToast(`نیا مہینہ "${name}" شامل ہو گیا! 🎉`);
+}
+
+function deleteCurrentMonth() {
+    if (appData.monthOrder.length <= 1) {
+        alert('کم از کم ایک مہینہ رہنا لازمی ہے!');
+        return;
+    }
+    const m = getCurrentMonthData();
+    if (!confirm(`کیا آپ واقعی "${m.name}" کو حذف کرنا چاہتے ہیں؟`)) return;
+    delete appData.months[currentMonthKey];
+    appData.monthOrder = appData.monthOrder.filter(k => k !== currentMonthKey);
+    currentMonthKey = appData.monthOrder[0];
+    saveAppData();
+    populateMonthSelect();
+    renderActiveTab();
+    showToast('مہینہ حذف ہو گیا!');
+}
+
+// ================================================================
+// F. CALCULATION ENGINE
+// ================================================================
+function calculateMonthStats(mKey) {
+    const m = appData.months[mKey];
+    if (!m) return null;
+
+    let totalDue = 0;
+    let totalMaint = 0;
+    let totalArrears = 0;
+    let paidCount = 0;
+    let arrearsCount = 0;
+    let closedCount = 0;
+
+    const defaultersList = [];
+
+    appData.flats.forEach(f => {
+        const record = m.flatsData[f.flat] || { maint: 0, arrears: null, note: '' };
+        const due = f.due;
+
+        if (record.maint === 'گھر بند ہے') {
+            closedCount++;
+            defaultersList.push({
+                ...f,
+                paid: 0,
+                due: due,
+                arrears: 0,
+                isClosed: true,
+                statusText: 'گھر بند ہے'
+            });
+            return;
+        }
+
+        totalDue += due;
+        const paid = typeof record.maint === 'number' ? record.maint : 0;
+        totalMaint += paid;
+
+        // Arrears
+        let arr = 0;
+        if (record.arrears && record.arrears > 0) {
+            arr = record.arrears;
+        } else if (paid < due) {
+            arr = due - paid;
+        }
+
+        if (arr > 0) {
+            totalArrears += arr;
+            arrearsCount++;
+            defaultersList.push({
+                ...f,
+                paid: paid,
+                due: due,
+                arrears: arr,
+                isClosed: false,
+                statusText: paid === 0 ? 'غیر ادا شدہ' : 'جزوی بقایا'
+            });
+        } else {
+            paidCount++;
+        }
+    });
+
+    let totalExpenses = 0;
+    (m.expenses || []).forEach(e => {
+        totalExpenses += (e.amount || 0);
+    });
+
+    const prevSavings = m.prevSavings || 0;
+    const closingSavings = totalMaint + prevSavings - totalExpenses;
+
+    return {
+        totalDue,
+        totalMaint,
+        totalArrears,
+        totalExpenses,
+        prevSavings,
+        closingSavings,
+        paidCount,
+        arrearsCount,
+        closedCount,
+        defaultersList
+    };
+}
+
+// ================================================================
+// G. RENDER: VIEW 1 - نارمل وصولی شیٹ & DEFAULTERS
+// ================================================================
+function setWusooliFilter(filter) {
+    currentWusooliFilter = filter;
+    ['all', 'unpaid', 'paid'].forEach(f => {
+        const btn = document.getElementById('wf-' + f);
+        if (btn) {
+            if (f === filter) {
+                btn.className = 'px-2.5 py-1 rounded-md font-bold text-white bg-blue-600 transition';
+            } else {
+                btn.className = 'px-2.5 py-1 rounded-md font-bold text-slate-300 hover:text-white transition';
+            }
+        }
+    });
+    renderWusooliView();
+}
+
+function filterWusooliTable() {
+    renderWusooliView();
+}
+
+function renderWusooliView() {
+    const m = getCurrentMonthData();
+    if (!m) return;
+    const stats = calculateMonthStats(currentMonthKey);
+
+    document.getElementById('dateBadge').innerText = 'تاریخ: ' + m.dateStr;
+
+    // 1. RENDER DEFAULTERS LIST (الگ لسٹ)
+    const defContainer = document.getElementById('unpaidCardsContainer');
+    defContainer.innerHTML = '';
+    const unpaidBadge = document.getElementById('tabUnpaidBadge');
+    
+    if (stats.defaultersList.length > 0) {
+        unpaidBadge.innerText = stats.defaultersList.length;
+        unpaidBadge.classList.remove('hidden');
+    } else {
+        unpaidBadge.classList.add('hidden');
+    }
+
+    document.getElementById('unpaidCountPill').innerText = `${stats.arrearsCount} فلیٹس بقایا` + (stats.closedCount ? ` + ${stats.closedCount} بند` : '');
+    document.getElementById('unpaidTotalAmount').innerText = formatRs(stats.totalArrears);
+
+    if (stats.defaultersList.length === 0) {
+        defContainer.innerHTML = `
+            <div class="col-span-full p-6 text-center bg-white rounded-xl border border-emerald-200">
+                <span class="text-3xl">🎉</span>
+                <p class="font-extrabold text-emerald-800 text-base mt-1">ماشاءاللہ! اس مہینے تمام فلیٹس کے واجبات کلیئر ہیں۔</p>
+                <p class="text-xs text-emerald-600">کوئی بقایا رقم باقی نہیں ہے۔</p>
+            </div>
+        `;
+    } else {
+        stats.defaultersList.forEach(item => {
+            const card = document.createElement('div');
+            card.className = item.isClosed 
+                ? 'bg-amber-50 border border-amber-300 rounded-xl p-3 shadow-xs space-y-2'
+                : 'bg-white border-2 border-rose-300 rounded-xl p-3 shadow-xs space-y-2 hover:shadow-md transition';
+
+            const phoneParam = item.phone ? `&phone=${encodeURIComponent(item.phone)}` : '';
+            const individualText = encodeURIComponent(
+                `السلام علیکم ${item.name} صاحب!\nالمصطفیٰ ہائٹس انتظامیہ کی جانب سے یاد دہانی:\nآپ کے فلیٹ ${item.flat} کے مینٹیننس واجبات برائے ${m.name} میں Rs. ${item.arrears.toLocaleString('en-US')} بقایا ہیں۔\nبرائے مہربانی جلد جمع کروا دیں۔ شکریہ!`
+            );
+            const indivUrl = `https://api.whatsapp.com/send?text=${individualText}${phoneParam}`;
+
+            card.innerHTML = `
+                <div class="flex items-center justify-between">
+                    <div>
+                        <span class="font-extrabold text-slate-900 text-sm">${item.flat}</span>
+                        <span class="font-bold text-slate-800 text-sm mr-1.5">${item.name}</span>
+                    </div>
+                    <span class="text-[11px] font-bold px-2 py-0.5 rounded-full ${item.isClosed ? 'bg-amber-200 text-amber-900' : 'bg-rose-100 text-rose-800'}">
+                        ${item.statusText}
+                    </span>
+                </div>
+                <div class="flex items-center justify-between text-xs pt-1 border-t border-slate-100">
+                    <span class="text-slate-500">بقایا واجب الادا:</span>
+                    <span class="font-extrabold text-rose-700 text-sm">${item.isClosed ? 'گھر بند' : formatRs(item.arrears)}</span>
+                </div>
+                ${!item.isClosed ? `
+                <div class="pt-1 flex gap-1.5">
+                    <a href="${indivUrl}" target="_blank" class="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white text-center text-xs font-bold py-1.5 px-2 rounded-lg transition flex items-center justify-center gap-1 shadow-xs">
+                        <span>💬</span> واٹس ایپ ریمائنڈر
+                    </a>
+                    <button onclick="quickPayFlat('${item.flat}')" class="bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold py-1.5 px-2.5 rounded-lg transition" title="وصولی درج کریں">✓ وصول</button>
+                </div>
+                ` : `
+                <div class="pt-1">
+                    <button onclick="toggleClosedFlat('${item.flat}', false)" class="w-full bg-slate-200 hover:bg-slate-300 text-slate-800 text-xs font-bold py-1.5 rounded-lg transition">گھر کھل گیا (فعال کریں)</button>
+                </div>
+                `}
+            `;
+            defContainer.appendChild(card);
+        });
+    }
+
+    // 2. RENDER WUSOOLI ENTRY TABLE
+    const tbody = document.getElementById('wusooliTableBody');
+    tbody.innerHTML = '';
+
+    const searchTerm = (document.getElementById('wusooliSearch')?.value || '').toLowerCase().trim();
+
+    let displayCount = 0;
+
+    appData.flats.forEach((f, idx) => {
+        const record = m.flatsData[f.flat] || { maint: 0, arrears: null, note: '' };
+        const isClosed = record.maint === 'گھر بند ہے';
+        const paidAmount = typeof record.maint === 'number' ? record.maint : 0;
+        const due = f.due;
+        const arrears = record.arrears !== null && record.arrears !== undefined ? record.arrears : (isClosed ? 0 : Math.max(0, due - paidAmount));
+        const isPaid = !isClosed && paidAmount >= due && arrears === 0;
+        const isUnpaid = !isClosed && (paidAmount < due || arrears > 0);
+
+        // Filter checks
+        if (currentWusooliFilter === 'unpaid' && !isUnpaid && !isClosed) return;
+        if (currentWusooliFilter === 'paid' && !isPaid) return;
+
+        // Search check
+        if (searchTerm) {
+            const matchFlat = f.flat.toLowerCase().includes(searchTerm);
+            const matchName = f.name.toLowerCase().includes(searchTerm);
+            const urduSearchTerm = convertTextRomanToUrdu(searchTerm);
+            const matchUrduName = f.name.includes(urduSearchTerm);
+            if (!matchFlat && !matchName && !matchUrduName) return;
+        }
+
+        displayCount++;
+
+        const tr = document.createElement('tr');
+        tr.className = (idx % 2 === 0) ? 'bg-white hover:bg-slate-50' : 'bg-slate-50/70 hover:bg-slate-100';
+
+        let badgeHtml = '';
+        if (isClosed) {
+            badgeHtml = '<span class="inline-block bg-amber-100 text-amber-800 text-xs font-bold px-2.5 py-0.5 rounded-full">🔒 گھر بند</span>';
+        } else if (isPaid) {
+            badgeHtml = '<span class="inline-block bg-emerald-100 text-emerald-800 text-xs font-bold px-2.5 py-0.5 rounded-full">مکمل ادا ✓</span>';
+        } else if (paidAmount > 0) {
+            badgeHtml = '<span class="inline-block bg-blue-100 text-blue-800 text-xs font-bold px-2.5 py-0.5 rounded-full">جزوی ادا</span>';
+        } else {
+            badgeHtml = '<span class="inline-block bg-rose-100 text-rose-800 text-xs font-bold px-2.5 py-0.5 rounded-full">غیر ادا شدہ</span>';
+        }
+
+        tr.innerHTML = `
+            <td class="p-3 text-center text-slate-500 font-medium text-xs">${f.sno}</td>
+            <td class="p-3 text-center font-extrabold text-slate-900">${f.flat}</td>
+            <td class="p-3 font-bold text-slate-900">
+                <div>${f.name}</div>
+                ${record.note ? `<span class="text-[11px] text-slate-500 font-normal">نوٹ: ${record.note}</span>` : ''}
+            </td>
+            <td class="p-3 text-center font-bold text-slate-700">${formatRs(f.due)}</td>
+            <td class="p-3 text-center">
+                <input type="number" value="${isClosed ? '' : paidAmount}" 
+                    onchange="saveWusooliPayment('${f.flat}', this.value)"
+                    placeholder="${isClosed ? 'بند' : '0'}"
+                    ${isClosed ? 'disabled' : ''}
+                    class="w-28 py-1.5 px-2 text-center font-extrabold rounded-lg border ${isPaid ? 'border-emerald-400 bg-emerald-50 text-emerald-800' : isUnpaid ? 'border-rose-300 bg-rose-50 text-rose-800' : 'border-slate-300'} focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm">
+            </td>
+            <td class="p-3 text-center font-extrabold ${arrears > 0 ? 'text-rose-700 bg-rose-50/50' : 'text-slate-400'}">
+                ${isClosed ? '-' : (arrears > 0 ? formatRs(arrears) : '0')}
+            </td>
+            <td class="p-3 text-center">${badgeHtml}</td>
+            <td class="p-3 text-center no-print">
+                <div class="flex items-center justify-center gap-1">
+                    <button onclick="quickPayFlat('${f.flat}')" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-1 px-2 rounded-lg text-xs transition" title="مکمل ادا درج کریں">✓ ادا</button>
+                    <button onclick="toggleClosedFlat('${f.flat}', ${!isClosed})" class="bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold py-1 px-1.5 rounded-lg text-xs transition" title="${isClosed ? 'گھر کھولیں' : 'گھر بند درج کریں'}">${isClosed ? '🔓' : '🔒'}</button>
+                </div>
+            </td>
+        `;
+        tbody.appendChild(tr);
+    });
+
+    // Footers
+    document.getElementById('footWusooliTotalDue').innerText = formatRs(stats.totalDue);
+    document.getElementById('footWusooliTotalPaid').innerText = formatRs(stats.totalMaint);
+    document.getElementById('footWusooliTotalArr').innerText = formatRs(stats.totalArrears);
+    const activeUnits = appData.flats.length - stats.closedCount;
+    const pct = activeUnits > 0 ? Math.round((stats.paidCount / activeUnits) * 100) : 0;
+    document.getElementById('footWusooliPercent').innerText = `وصولی شرح: ${pct}% (${stats.paidCount}/${activeUnits} فلیٹس ادا)`;
+    document.getElementById('totalFlatsBadge').innerText = `${displayCount} فلیٹس دکھائی دے رہے ہیں`;
+}
+
+function saveWusooliPayment(flatKey, value) {
+    const m = getCurrentMonthData();
+    if (!m) return;
+    if (!m.flatsData[flatKey]) m.flatsData[flatKey] = { maint: 0, arrears: null, note: '' };
+
+    const flatInfo = appData.flats.find(f => f.flat === flatKey);
+    const due = flatInfo ? flatInfo.due : 3000;
+    const paid = parseInt(value) || 0;
+
+    m.flatsData[flatKey].maint = paid;
+    if (paid < due) {
+        m.flatsData[flatKey].arrears = due - paid;
+    } else {
+        m.flatsData[flatKey].arrears = null;
+    }
+
+    saveAppData();
+    renderWusooliView();
+    showToast(`${flatKey} ادائیگی محفوظ: Rs. ${paid.toLocaleString('en-US')}`);
+}
+
+function quickPayFlat(flatKey) {
+    const m = getCurrentMonthData();
+    if (!m) return;
+    const flatInfo = appData.flats.find(f => f.flat === flatKey);
+    const due = flatInfo ? flatInfo.due : 3000;
+
+    if (!m.flatsData[flatKey]) m.flatsData[flatKey] = { maint: 0, arrears: null, note: '' };
+    m.flatsData[flatKey].maint = due;
+    m.flatsData[flatKey].arrears = null;
+
+    saveAppData();
+    renderWusooliView();
+    showToast(`${flatKey} مکمل ادا شدہ درج ہو گیا! ✓`);
+}
+
+function toggleClosedFlat(flatKey, closed) {
+    const m = getCurrentMonthData();
+    if (!m) return;
+    if (!m.flatsData[flatKey]) m.flatsData[flatKey] = { maint: 0, arrears: null, note: '' };
+
+    if (closed) {
+        m.flatsData[flatKey].maint = 'گھر بند ہے';
+        m.flatsData[flatKey].arrears = null;
+        m.flatsData[flatKey].note = 'گھر بند ہے';
+    } else {
+        m.flatsData[flatKey].maint = 0;
+        m.flatsData[flatKey].arrears = null;
+        m.flatsData[flatKey].note = '';
+    }
+
+    saveAppData();
+    renderWusooliView();
+    showToast(`${flatKey}: ${closed ? 'گھر بند درج ہو گیا' : 'فعال ہو گیا'}`);
+}
+
+function markAllFlatsPaid() {
+    if (!confirm('کیا آپ تمام فعال فلیٹس کو مکمل ادا شدہ درج کرنا چاہتے ہیں؟')) return;
+    const m = getCurrentMonthData();
+    if (!m) return;
+    appData.flats.forEach(f => {
+        const record = m.flatsData[f.flat];
+        if (record && record.maint === 'گھر بند ہے') return;
+        m.flatsData[f.flat] = { maint: f.due, arrears: null, note: '' };
+    });
+    saveAppData();
+    renderWusooliView();
+    showToast('سب فلیٹس مکمل ادا شدہ درج ہو گئے! ✓');
+}
+
+// ================================================================
+// H. RENDER: VIEW 2 - فائنل سمری و اخراجات شیٹ (FINAL EXECUTIVE VIEW)
+// ================================================================
+function renderFinalView() {
+    const m = getCurrentMonthData();
+    if (!m) return;
+    const stats = calculateMonthStats(currentMonthKey);
+
+    // 1. KPI CARDS
+    document.getElementById('kpiCollected').innerText = formatRs(stats.totalMaint);
+    const activeUnits = appData.flats.length - stats.closedCount;
+    const pct = activeUnits > 0 ? Math.round((stats.paidCount / activeUnits) * 100) : 0;
+    document.getElementById('kpiCollectedSub').innerText = `${pct}% وصولی (${stats.paidCount}/${activeUnits} فلیٹس)`;
+
+    document.getElementById('kpiArrears').innerText = formatRs(stats.totalArrears);
+    document.getElementById('kpiArrearsSub').innerText = `${stats.arrearsCount} فلیٹس کی طرف بقایا`;
+
+    document.getElementById('kpiExpenses').innerText = formatRs(stats.totalExpenses);
+    document.getElementById('kpiExpensesSub').innerText = `${m.expenses.length} مدات میں خرچ`;
+
+    document.getElementById('kpiClosing').innerText = formatRs(stats.closingSavings);
+
+    // 2. STATUS BANNER
+    document.getElementById('statusBanner').innerHTML = `
+        🏢 <b>فلیٹ اسٹیٹس سمری:</b> 
+        <span class="text-emerald-700 font-bold">${stats.paidCount} فلیٹ ادا شدہ (مکمل)</span> | 
+        <span class="text-rose-700 font-bold">${stats.arrearsCount} فلیٹ جزوی بقایا</span> | 
+        <span class="text-amber-700 font-bold">${stats.closedCount} گھر بند</span> | 
+        <span>1 دکاندار</span>
+    `;
+
+    // 3. FLATS TABLE
+    const fTbody = document.getElementById('finalFlatsTableBody');
+    fTbody.innerHTML = '';
+
+    appData.flats.forEach((f, idx) => {
+        const record = m.flatsData[f.flat] || { maint: 0, arrears: null };
+        const tr = document.createElement('tr');
+        tr.className = (idx % 2 === 0) ? 'bg-white hover:bg-slate-50' : 'bg-slate-50/70 hover:bg-slate-100';
+
+        let maintDisplay = '-';
+        let maintClass = 'text-center font-bold';
+
+        if (typeof record.maint === 'number') {
+            if (record.maint > 0) {
+                maintDisplay = formatRs(record.maint);
+                maintClass += ' text-emerald-700 bg-emerald-50/50';
+            } else {
+                maintDisplay = '0 (غیر ادا)';
+                maintClass += ' text-rose-600 bg-rose-50/60';
+            }
+        } else if (record.maint === 'گھر بند ہے') {
+            maintDisplay = '🔒 گھر بند ہے';
+            maintClass += ' text-amber-700 font-semibold bg-amber-50';
+        }
+
+        let arrearsDisplay = '-';
+        let arrearsClass = 'text-center font-bold text-slate-400';
+        if (record.arrears && record.arrears > 0) {
+            arrearsDisplay = formatRs(record.arrears);
+            arrearsClass = 'text-center font-extrabold text-rose-700 bg-rose-50/70';
+        }
+
+        tr.innerHTML = `
+            <td class="p-2.5 text-center text-slate-500 font-medium">${f.sno}</td>
+            <td class="p-2.5 text-center font-extrabold text-slate-900">${f.flat}</td>
+            <td class="p-2.5 font-bold text-blue-950">${f.name}</td>
+            <td class="p-2.5 ${maintClass}">${maintDisplay}</td>
+            <td class="p-2.5 ${arrearsClass}">${arrearsDisplay}</td>
+        `;
+        fTbody.appendChild(tr);
+    });
+
+    document.getElementById('totalMaintFooter').innerText = formatRs(stats.totalMaint);
+    document.getElementById('totalArrearsFooter').innerText = formatRs(stats.totalArrears);
+    document.getElementById('dashFlatsCountBadge').innerText = `${appData.flats.length} فلیٹس / دکان`;
+
+    // 4. EXPENSES TABLE
+    const eTbody = document.getElementById('finalExpensesTableBody');
+    eTbody.innerHTML = '';
+    m.expenses.forEach((e, idx) => {
+        const tr = document.createElement('tr');
+        tr.className = (idx % 2 === 0) ? 'bg-white' : 'bg-slate-50/70';
+        tr.innerHTML = `
+            <td class="p-2.5 font-semibold text-slate-800">${e.desc}</td>
+            <td class="p-2.5 text-center font-bold text-slate-900">${formatRs(e.amount)}</td>
+            <td class="p-2.5 text-xs text-slate-500">${e.details || '-'}</td>
+        `;
+        eTbody.appendChild(tr);
+    });
+
+    document.getElementById('finalExpCountBadge').innerText = `${m.expenses.length} مدات`;
+
+    // 5. ACCOUNTING CASH FLOW FOOTER
+    document.getElementById('boxTotalExp').innerText = formatRs(stats.totalExpenses);
+    document.getElementById('boxPrevSavings').innerText = formatRs(stats.prevSavings);
+    document.getElementById('boxClosingSavings').innerText = formatRs(stats.closingSavings);
+}
+
+// ================================================================
+// I. RENDER: VIEW 3 - اخراجات رجسٹر (EXPENSES VIEW)
+// ================================================================
+function renderExpensesView() {
+    const m = getCurrentMonthData();
+    if (!m) return;
+    const stats = calculateMonthStats(currentMonthKey);
+
+    document.getElementById('expenseSummaryBadge').innerText = `${m.name} — کل مدات: ${m.expenses.length}`;
+    document.getElementById('expTotalHeading').innerText = formatRs(stats.totalExpenses);
+
+    const container = document.getElementById('expensesEditableList');
+    container.innerHTML = '';
+
+    if (m.expenses.length === 0) {
+        container.innerHTML = `
+            <div class="p-6 text-center text-slate-400 bg-slate-50 rounded-xl border border-dashed border-slate-300">
+                ابھی تک اس مہینے کوئی خرچہ شامل نہیں کیا گیا ہے۔
+            </div>
+        `;
+        return;
+    }
+
+    m.expenses.forEach((e, idx) => {
+        const row = document.createElement('div');
+        row.className = 'flex flex-wrap items-center gap-2 bg-slate-50 hover:bg-slate-100 p-3 rounded-xl border border-slate-200 transition';
+        row.innerHTML = `
+            <span class="w-8 text-center text-slate-400 font-bold text-xs">${idx + 1}</span>
+            <input type="text" value="${e.desc}" onchange="updateExpenseField(${idx}, 'desc', this.value)"
+                class="urdu-input flex-1 min-w-[160px] py-1.5 px-3 rounded-lg border border-slate-300 font-bold text-sm bg-white">
+            <input type="number" value="${e.amount}" onchange="updateExpenseField(${idx}, 'amount', this.value)"
+                class="w-28 py-1.5 px-3 rounded-lg border border-slate-300 font-extrabold text-center text-sm bg-white text-rose-700">
+            <input type="text" value="${e.details || ''}" onchange="updateExpenseField(${idx}, 'details', this.value)"
+                placeholder="تفصیلات / تاریخ"
+                class="urdu-input flex-1 min-w-[140px] py-1.5 px-3 rounded-lg border border-slate-300 text-xs bg-white text-slate-600">
+            <button onclick="removeExpense(${idx})" class="bg-rose-100 hover:bg-rose-200 text-rose-700 font-bold py-1.5 px-3 rounded-lg text-xs transition" title="خرچہ حذف کریں">
+                🗑️
+            </button>
+        `;
+        container.appendChild(row);
+    });
+}
+
+function addNewExpense() {
+    const descRaw = document.getElementById('newExpName').value.trim();
+    const amount = parseInt(document.getElementById('newExpAmount').value) || 0;
+    const detailsRaw = document.getElementById('newExpDetails').value.trim();
+
+    if (!descRaw) { alert('خرچے کا نام لکھیں!'); return; }
+    if (amount <= 0) { alert('درست رقم درج کریں!'); return; }
+
+    const desc = convertTextRomanToUrdu(descRaw);
+    const details = convertTextRomanToUrdu(detailsRaw);
+
+    const m = getCurrentMonthData();
+    if (!m) return;
+
+    m.expenses.push({ desc, amount, details });
+    saveAppData();
+
+    document.getElementById('newExpName').value = '';
+    document.getElementById('newExpAmount').value = '';
+    document.getElementById('newExpDetails').value = '';
+
+    renderExpensesView();
+    showToast(`خرچہ "${desc}" شامل ہو گیا!`);
+}
+
+function updateExpenseField(idx, field, val) {
+    const m = getCurrentMonthData();
+    if (!m || !m.expenses[idx]) return;
+    if (field === 'amount') {
+        m.expenses[idx].amount = parseInt(val) || 0;
+    } else {
+        m.expenses[idx][field] = convertTextRomanToUrdu(val);
+    }
+    saveAppData();
+    renderExpensesView();
+}
+
+function removeExpense(idx) {
+    const m = getCurrentMonthData();
+    if (!m) return;
+    const item = m.expenses[idx];
+    if (!confirm(`کیا آپ "${item.desc}" (Rs. ${item.amount}) کو حذف کرنا چاہتے ہیں؟`)) return;
+    m.expenses.splice(idx, 1);
+    saveAppData();
+    renderExpensesView();
+    showToast('خرچہ حذف ہو گیا!');
+}
+
+// ================================================================
+// J. RENDER: VIEW 4 - سیٹنگز (SETTINGS VIEW)
+// ================================================================
+function renderSettingsView() {
+    document.getElementById('setBuildingName').value = appData.buildingName;
+    const m = getCurrentMonthData();
+    document.getElementById('setPrevBalance').value = m ? m.prevSavings : 0;
+
+    const tbody = document.getElementById('flatRegisterBody');
+    tbody.innerHTML = '';
+
+    appData.flats.forEach((f, idx) => {
+        const tr = document.createElement('tr');
+        tr.className = (idx % 2 === 0) ? 'bg-white' : 'bg-slate-50';
+        tr.innerHTML = `
+            <td class="p-2.5 text-center text-slate-500 font-bold">${f.sno}</td>
+            <td class="p-2.5 text-center">
+                <input type="text" value="${f.flat}" onchange="updateFlatField(${idx}, 'flat', this.value)"
+                    class="w-16 py-1 px-2 border rounded font-extrabold text-center text-xs">
+            </td>
+            <td class="p-2.5">
+                <input type="text" value="${f.name}" onchange="updateFlatField(${idx}, 'name', this.value)"
+                    class="urdu-input w-full py-1 px-2 border rounded font-bold text-xs">
+            </td>
+            <td class="p-2.5 text-center">
+                <input type="number" value="${f.due}" onchange="updateFlatField(${idx}, 'due', this.value)"
+                    class="w-24 py-1 px-2 border rounded font-bold text-center text-xs">
+            </td>
+            <td class="p-2.5 text-center">
+                <input type="text" value="${f.phone || ''}" onchange="updateFlatField(${idx}, 'phone', this.value)"
+                    placeholder="03001234567" dir="ltr"
+                    class="w-28 py-1 px-2 border rounded text-xs text-center">
+            </td>
+            <td class="p-2.5 text-center">
+                <button onclick="removeFlatRegistry(${idx})" class="text-rose-600 hover:text-rose-800 font-bold text-xs">🗑️</button>
+            </td>
+        `;
+        tbody.appendChild(tr);
+    });
+}
+
+function updateSetting(key, val) {
+    appData[key] = val;
+    saveAppData();
+    showToast('سیٹنگ محفوظ ہو گئی!');
+}
+
+function updateMonthPrevBalance(val) {
+    const m = getCurrentMonthData();
+    if (!m) return;
+    m.prevSavings = parseInt(val) || 0;
+    saveAppData();
+    showToast('پچھلی بچت اپڈیٹ ہو گئی!');
+}
+
+function updateFlatField(idx, field, val) {
+    if (!appData.flats[idx]) return;
+    if (field === 'due') {
+        appData.flats[idx].due = parseInt(val) || 0;
+    } else if (field === 'name') {
+        appData.flats[idx].name = convertTextRomanToUrdu(val);
+    } else {
+        appData.flats[idx][field] = val;
+    }
+    saveAppData();
+}
+
+function addNewFlatPrompt() {
+    const flatNo = prompt('فلیٹ نمبر لکھیں (مثلاً G-4 یا T-5):');
+    if (!flatNo) return;
+    const rawName = prompt('رہائشی کا نام (رومن یا اردو میں):') || '';
+    const name = convertTextRomanToUrdu(rawName);
+    const due = parseInt(prompt('ماہانہ واجب رقم:', '3000')) || 3000;
+
+    const newSno = appData.flats.length + 1;
+    appData.flats.push({
+        sno: newSno,
+        flat: flatNo.trim(),
+        name: name.trim(),
+        due: due,
+        phone: ''
+    });
+
+    // Add to all months
+    Object.values(appData.months).forEach(m => {
+        if (!m.flatsData[flatNo.trim()]) {
+            m.flatsData[flatNo.trim()] = { maint: 0, arrears: null, note: '' };
+        }
+    });
+
+    saveAppData();
+    renderSettingsView();
+    showToast(`نیا یونٹ ${flatNo} شامل ہو گیا!`);
+}
+
+function removeFlatRegistry(idx) {
+    const f = appData.flats[idx];
+    if (!confirm(`کیا آپ واقعی فلیٹ "${f.flat} - ${f.name}" کو لسٹ سے خارج کرنا چاہتے ہیں؟`)) return;
+    appData.flats.splice(idx, 1);
+    // re-number
+    appData.flats.forEach((item, i) => item.sno = i + 1);
+    saveAppData();
+    renderSettingsView();
+    showToast('فلیٹ خارج کر دیا گیا۔');
+}
+
+// ================================================================
+// K. WHATSAPP NOTICE BUILDER
+// ================================================================
+function buildWhatsAppGroupMessage() {
+    const m = getCurrentMonthData();
+    if (!m) return '';
+    const stats = calculateMonthStats(currentMonthKey);
+
+    let msg = `📢 *اطلاع برائے بلڈنگ مینٹیننس — ${appData.buildingName}*\n`;
+    msg += `📋 *بقایا جات و مینٹیننس ریکوری رپورٹ — ${m.name}*\n`;
+    msg += `----------------------------------------\n`;
+    msg += `محترم ممبران، بلڈنگ کے معمول کے اخراجات (کے الیکٹرک، پمپ، جمعدار و چوکیدار) کی بروقت ادائیگی کے لیے درج ذیل فلیٹس کے واجبات جلد از جلد جمع کروانے کی التماس ہے:\n\n`;
+
+    let count = 1;
+    stats.defaultersList.forEach(item => {
+        if (!item.isClosed) {
+            msg += `${count}. *فلیٹ ${item.flat}* (${item.name}): واجب الادا *Rs. ${item.arrears.toLocaleString('en-US')}*\n`;
+            count++;
+        }
+    });
+
+    const closed = stats.defaultersList.filter(d => d.isClosed);
+    if (closed.length > 0) {
+        msg += `\n🔒 *بند فلیٹس:* ${closed.map(c => `فلیٹ ${c.flat} (${c.name})`).join(', ')}\n`;
+    }
+
+    msg += `\n⚠️ *کُل واجب الادا بقایا رقم: Rs. ${stats.totalArrears.toLocaleString('en-US')}*\n`;
+    msg += `----------------------------------------\n`;
+    msg += `بلڈنگ کے مشترکہ نظام کو احسن طریقے سے چلانے کے لیے آپ کا تعاون اشد ضروری ہے۔ جزاک اللہ خیراً!\n\n`;
+    msg += `_منجانب: بلڈنگ انتظامیہ کمیٹی_`;
+
+    return msg;
+}
+
+function shareWhatsAppGroup() {
+    const msg = buildWhatsAppGroupMessage();
+    const url = `https://api.whatsapp.com/send?text=${encodeURIComponent(msg)}`;
+    window.open(url, '_blank');
+}
+
+function copyWhatsAppList() {
+    const msg = buildWhatsAppGroupMessage();
+    navigator.clipboard.writeText(msg).then(() => {
+        showToast('واٹس ایپ بقایا لسٹ کاپی ہو گئی! 📋');
+    }).catch(err => {
+        alert('کاپی کرنے میں مسئلہ: ' + err);
+    });
+}
+
+// ================================================================
+// L. EXACT EXCEL (.XLSX) EXPORT — MATCHING EXISTING EXCEL TEMPLATE
+// ================================================================
+function exportToExcelOriginalFormat() {
+    if (typeof XLSX === 'undefined') {
+        alert('ایکسل لائبریری لوڈ ہو رہی ہے، برائے مہربانی 2 سیکنڈ بعد دوبارہ کوشش کریں۔');
+        return;
+    }
+
+    const m = getCurrentMonthData();
+    if (!m) return;
+    const stats = calculateMonthStats(currentMonthKey);
+
+    const wb = XLSX.utils.book_new();
+
+    // Prepare Array-of-Arrays matching the original Excel file structure exactly:
+    // Rows 1-3: empty
+    // Row 4: [AL MUSTAFA HEIGHTS 5-E-18/19]
+    // Row 5: empty
+    // Row 6: [year, 'سال', null, monthKey, 'مہینہ', null, dateStr, 'تاریخ']
+    // Row 7: ['تفصیلات', 'اخراجات کی رقم', 'اخراجات کی تفصیل', 'مینٹیننس', 'بقایا رقم', 'نام', 'فلیٹ نمبر', 'سیریل نمبر']
+    // Rows 8-27: 20 flats + expenses
+    // Row 23: [null, totalExpenses, 'کل اخراجات', ...]
+    // Row 25: [null, prevSavings, 'پچھلی بچت', ...]
+    // Row 26: [null, closingSavings, 'کل بچت', ...]
+    // Row 28: [null, null, null, totalMaint, totalArrears, 'کُل میزان', null, null]
+
+    const aoa = [
+        [], // Row 1
+        [], // Row 2
+        [], // Row 3
+        ['AL MUSTAFA HEIGHTS 5-E-18/19'], // Row 4
+        [], // Row 5
+        [m.year || 2026, 'سال', null, currentMonthKey, 'مہینہ', null, m.dateStr, 'تاریخ'], // Row 6
+        ['تفصیلات', 'اخراجات کی رقم', 'اخراجات کی تفصیل', 'مینٹیننس', 'بقایا رقم', 'نام', 'فلیٹ نمبر', 'سیریل نمبر'] // Row 7
+    ];
+
+    // 20 Flats data rows (Index 7 to 26 in 0-based array, corresponding to Excel Rows 8 to 27)
+    for (let i = 0; i < 20; i++) {
+        const flatItem = appData.flats[i] || { sno: i + 1, flat: '-', name: '-', due: 0 };
+        const rec = m.flatsData[flatItem.flat] || { maint: 0, arrears: null };
+        const expItem = m.expenses[i] || null;
+
+        // Right side (Flats)
+        const sno = flatItem.sno;
+        const flatNo = flatItem.flat;
+        const residentName = flatItem.name;
+        const maintVal = (typeof rec.maint === 'number') ? rec.maint : (rec.maint === 'گھر بند ہے' ? 'گھر بند ہے' : 0);
+        const arrearsVal = (rec.arrears && rec.arrears > 0) ? rec.arrears : null;
+
+        // Left side (Expenses)
+        let expDetails = expItem ? (expItem.details || null) : null;
+        let expAmount = expItem ? expItem.amount : null;
+        let expDesc = expItem ? expItem.desc : null;
+
+        // Specific summary rows on expenses side as in original template:
+        // Original: Row 23 (i = 15): کل اخراجات
+        // Original: Row 25 (i = 17): پچھلی بچت
+        // Original: Row 26 (i = 18): کل بچت
+        if (i === 15) {
+            expDesc = 'کل اخراجات';
+            expAmount = stats.totalExpenses;
+            expDetails = null;
+        } else if (i === 17) {
+            expDesc = 'پچھلی بچت';
+            expAmount = stats.prevSavings;
+            expDetails = null;
+        } else if (i === 18) {
+            expDesc = 'کل بچت';
+            expAmount = stats.closingSavings;
+            expDetails = null;
+        }
+
+        aoa.push([
+            expDetails,    // Col A (1)
+            expAmount,     // Col B (2)
+            expDesc,       // Col C (3)
+            maintVal,      // Col D (4)
+            arrearsVal,    // Col E (5)
+            residentName,  // Col F (6)
+            flatNo,        // Col G (7)
+            sno            // Col H (8)
+        ]);
+    }
+
+    // Row 28 (Total row)
+    aoa.push([
+        null,
+        null,
+        null,
+        stats.totalMaint,
+        stats.totalArrears > 0 ? stats.totalArrears : null,
+        'کُل میزان',
+        null,
+        null
+    ]);
+
+    const ws = XLSX.utils.aoa_to_sheet(aoa);
+
+    // Set Column Widths
+    ws['!cols'] = [
+        { wch: 28 }, // Col A: تفصیلات
+        { wch: 16 }, // Col B: اخراجات کی رقم
+        { wch: 24 }, // Col C: اخراجات کی تفصیل
+        { wch: 14 }, // Col D: مینٹیننس
+        { wch: 14 }, // Col E: بقایا رقم
+        { wch: 20 }, // Col F: نام
+        { wch: 12 }, // Col G: فلیٹ نمبر
+        { wch: 12 }  // Col H: سیریل نمبر
+    ];
+
+    // Right-To-Left view orientation for proper Urdu display in Excel
+    ws['!views'] = [{ RTL: true }];
+
+    XLSX.utils.book_append_sheet(wb, ws, currentMonthKey);
+
+    // Write file
+    const filename = `MAINTANENCE_SHEET_${currentMonthKey}_2026.xlsx`;
+    XLSX.writeFile(wb, filename);
+    showToast(`ایکسل فائل "${filename}" ڈاؤن لوڈ ہو گئی! 📊`);
+}
+
+// ================================================================
+// M. BACKUP & RESTORE (JSON)
+// ================================================================
+function exportBackupJSON() {
+    const str = JSON.stringify(appData, null, 2);
+    const blob = new Blob([str], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `AlMustafa_Maintenance_Backup_${new Date().toISOString().slice(0, 10)}.json`;
+    a.click();
+    URL.revokeObjectURL(url);
+    showToast('بیک اپ فائل ڈاؤن لوڈ ہو گئی! 💾');
+}
+
+function importBackupJSON(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        try {
+            const data = JSON.parse(e.target.result);
+            if (!data.flats || !data.months) {
+                alert('غلط بیک اپ فائل! براہ کرم درست فائل منتخب کریں۔');
+                return;
+            }
+            if (!confirm('کیا آپ موجودہ ڈیٹا کو اس بیک اپ سے بدلنا چاہتے ہیں؟')) return;
+            appData = data;
+            currentMonthKey = appData.monthOrder[0] || 'SEPTEMBER';
+            saveAppData();
+            populateMonthSelect();
+            renderActiveTab();
+            showToast('بیک اپ کامیابی سے بحال ہو گیا! 📂');
+        } catch (err) {
+            alert('فائل پڑھنے میں غلطی: ' + err.message);
+        }
+    };
+    reader.readAsText(file);
+    event.target.value = '';
+}
+
+// ================================================================
+// N. MASTER RENDER DISPATCHER
+// ================================================================
+function renderActiveTab() {
+    if (currentTab === 'wusooli') {
+        renderWusooliView();
+    } else if (currentTab === 'final') {
+        renderFinalView();
+    } else if (currentTab === 'expenses') {
+        renderExpensesView();
+    } else if (currentTab === 'settings') {
+        renderSettingsView();
+    }
+}
+
+// Initialize on page load
+window.onload = () => {
+    populateMonthSelect();
+    switchTab('wusooli');
+};
+</script>
+</body>
+</html>
