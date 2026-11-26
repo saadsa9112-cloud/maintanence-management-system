@@ -928,26 +928,26 @@ export default function CollectionsPage({
 
         {/* View mode toggle */}
         <div className="flex items-center gap-2 w-full md:w-auto">
-          <div className="flex items-center bg-slate-100 p-0.5 rounded-lg text-xs font-semibold border border-slate-200">
+          <div className="flex items-center bg-slate-100 p-0.5 rounded-xl text-xs font-semibold border border-slate-200 w-full md:w-auto shadow-2xs">
             <button
               onClick={() => setViewMode('grid')}
-              className={`px-3 py-1 rounded-md transition ${
+              className={`flex-1 md:flex-none px-3 py-1.5 rounded-lg transition text-center cursor-pointer ${
                 viewMode === 'grid'
-                  ? 'bg-white text-slate-900 shadow-xs font-bold'
+                  ? 'bg-white text-slate-900 shadow-xs font-black'
                   : 'text-slate-600 hover:text-slate-900'
               }`}
             >
-              Excel Table View
+              📊 Excel Table View
             </button>
             <button
               onClick={() => setViewMode('cards')}
-              className={`px-3 py-1 rounded-md transition ${
+              className={`flex-1 md:flex-none px-3 py-1.5 rounded-lg transition text-center cursor-pointer ${
                 viewMode === 'cards'
-                  ? 'bg-white text-slate-900 shadow-xs font-bold'
+                  ? 'bg-white text-slate-900 shadow-xs font-black'
                   : 'text-slate-600 hover:text-slate-900'
               }`}
             >
-              Separated Cards View
+              📋 Mobile Cards View
             </button>
           </div>
         </div>
@@ -1320,9 +1320,9 @@ export default function CollectionsPage({
       {viewMode === 'grid' && (
         <div className="erp-card rounded-2xl shadow-xs border border-slate-200/90 overflow-hidden">
           {/* Controls Bar: Search, Filter Tabs, Quick Mark */}
-          <div className="bg-slate-900 text-white p-3 sm:p-3.5 flex flex-col md:flex-row items-center justify-between gap-3 border-b border-slate-800">
-            <div className="flex items-center gap-2 w-full md:w-auto">
-              <div className="relative flex-1 md:w-56">
+          <div className="bg-slate-900 text-white p-3 sm:p-3.5 flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3 border-b border-slate-800">
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 w-full md:w-auto">
+              <div className="relative w-full sm:w-48 md:w-56">
                 <input
                   type="text"
                   value={search}
@@ -1332,12 +1332,12 @@ export default function CollectionsPage({
                 />
               </div>
 
-              {/* Filter Pills */}
-              <div className="flex items-center gap-1.5 flex-wrap">
-                <div className="flex items-center bg-slate-800/90 p-0.5 rounded-lg text-xs border border-slate-700">
+              {/* Filter Pills with touch scrolling */}
+              <div className="flex items-center gap-1.5 overflow-x-auto pb-1 sm:pb-0 max-w-full no-scrollbar">
+                <div className="flex items-center bg-slate-800/90 p-0.5 rounded-lg text-xs border border-slate-700 shrink-0">
                   <button
                     onClick={() => setFilter('all')}
-                    className={`px-2.5 py-1 rounded-md font-semibold transition ${filter === 'all' ? 'bg-blue-600 text-white shadow-xs' : 'text-slate-400 hover:text-white'}`}
+                    className={`px-2.5 py-1 rounded-md font-semibold transition shrink-0 ${filter === 'all' ? 'bg-blue-600 text-white shadow-xs' : 'text-slate-400 hover:text-white'}`}
                   >
                     {t.tabAllFlats} ({flats.length})
                   </button>
@@ -1346,7 +1346,7 @@ export default function CollectionsPage({
                       setFilter('arrears');
                       setBroadcastMode('unpaid');
                     }}
-                    className={`px-2.5 py-1 rounded-md font-semibold transition ${filter === 'arrears' ? 'bg-rose-600 text-white shadow-xs' : 'text-slate-400 hover:text-white'}`}
+                    className={`px-2.5 py-1 rounded-md font-semibold transition shrink-0 ${filter === 'arrears' ? 'bg-rose-600 text-white shadow-xs' : 'text-slate-400 hover:text-white'}`}
                   >
                     {t.tabUnpaidOnly} ({unpaidFlats.length})
                   </button>
@@ -1355,13 +1355,13 @@ export default function CollectionsPage({
                       setFilter('paid');
                       setBroadcastMode('paid');
                     }}
-                    className={`px-2.5 py-1 rounded-md font-semibold transition ${filter === 'paid' ? 'bg-emerald-600 text-white shadow-xs' : 'text-slate-400 hover:text-white'}`}
+                    className={`px-2.5 py-1 rounded-md font-semibold transition shrink-0 ${filter === 'paid' ? 'bg-emerald-600 text-white shadow-xs' : 'text-slate-400 hover:text-white'}`}
                   >
                     {t.tabPaidOnly} ({paidFlats.length})
                   </button>
                   <button
                     onClick={() => setFilter('closed')}
-                    className={`px-3 py-1 rounded-lg font-bold transition ${filter === 'closed' ? 'bg-amber-600 text-white shadow-xs' : 'text-slate-300 hover:text-white'}`}
+                    className={`px-3 py-1 rounded-lg font-bold transition shrink-0 ${filter === 'closed' ? 'bg-amber-600 text-white shadow-xs' : 'text-slate-300 hover:text-white'}`}
                     title="Locked / Closed Units (Controlled via Residents Directory RD)"
                   >
                     🔒 Locked ({closedFlats.length})
@@ -1372,7 +1372,7 @@ export default function CollectionsPage({
                 <select
                   value={floorFilter}
                   onChange={(e) => setFloorFilter(e.target.value)}
-                  className="bg-slate-900/80 text-white text-xs font-bold py-1 px-2.5 rounded-xl border border-white/20 focus:outline-none cursor-pointer"
+                  className="bg-slate-900/80 text-white text-xs font-bold py-1 px-2.5 rounded-xl border border-white/20 focus:outline-none cursor-pointer shrink-0"
                   title="فلور منتخب کریں (Filter by Floor)"
                 >
                   <option value="all">تمام فلورز (All Floors)</option>
@@ -1387,7 +1387,7 @@ export default function CollectionsPage({
             </div>
 
             {/* Quick Actions Group */}
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 overflow-x-auto pb-1 sm:pb-0">
               <button
                 onClick={() => setIsFloorModalOpen(true)}
                 className="backdrop-blur-md bg-indigo-500/25 hover:bg-indigo-500/40 text-indigo-100 text-xs font-bold py-1.5 px-3 rounded-xl transition flex items-center gap-1.5 border border-indigo-400/40 shrink-0 cursor-pointer shadow-xs"
@@ -1420,9 +1420,9 @@ export default function CollectionsPage({
             </div>
           </div>
 
-          {/* Table */}
-          <div className="overflow-x-auto">
-            <table className="w-full text-left text-xs sm:text-sm border-collapse">
+          {/* Table with smooth touch horizontal scrolling and min-width */}
+          <div className="overflow-x-auto" style={{ WebkitOverflowScrolling: 'touch' }}>
+            <table className="w-full min-w-[760px] text-left text-xs sm:text-sm border-collapse">
               <thead className="glass-table-head text-slate-700 border-b border-slate-200 text-xs font-black uppercase tracking-wide select-none">
                 <tr>
                   <th onClick={() => handleSort('sno')} className="p-3 text-center w-12 border-r border-slate-200/60 cursor-pointer hover:bg-slate-200/60">
