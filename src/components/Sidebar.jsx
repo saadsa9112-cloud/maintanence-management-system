@@ -17,7 +17,8 @@ import {
   LogOut,
   KeyRound,
   Shield,
-  Database
+  Database,
+  Cloud
 } from 'lucide-react';
 
 export default function Sidebar({
@@ -33,7 +34,8 @@ export default function Sidebar({
   auditLogCount = 0,
   onLogout,
   onOpenChangePassword,
-  onOpenVaultModal
+  onOpenVaultModal,
+  onOpenCloudSetup
 }) {
   const unpaidCount = (currentMonthData?.flats || []).filter(
     f => f && (f.status === 'arrears' || (f.status !== 'closed' && Number(f.arrears) > 0))
@@ -237,14 +239,28 @@ export default function Sidebar({
             </div>
 
             {/* Quick Security & Vault Action Strip */}
-            <div className="grid grid-cols-3 gap-1 pt-1 border-t border-slate-800/80">
+            <div className="grid grid-cols-4 gap-1 pt-1 border-t border-slate-800/80">
+              {onOpenCloudSetup && (
+                <button
+                  onClick={() => {
+                    onOpenCloudSetup();
+                    if (onClose) onClose();
+                  }}
+                  className="flex items-center justify-center gap-1 py-1 px-1 rounded-lg text-[10px] font-semibold text-blue-400 hover:bg-blue-500/10 border border-blue-500/20 transition cursor-pointer"
+                  title="Firebase Cloud 2-Way Sync (کلاؤڈ سنک)"
+                >
+                  <Cloud className="w-3 h-3 shrink-0" />
+                  <span>Cloud</span>
+                </button>
+              )}
+
               {onOpenVaultModal && (
                 <button
                   onClick={() => {
                     onOpenVaultModal();
                     if (onClose) onClose();
                   }}
-                  className="flex items-center justify-center gap-1 py-1 px-1.5 rounded-lg text-[10px] font-semibold text-emerald-400 hover:bg-emerald-500/10 border border-emerald-500/20 transition cursor-pointer"
+                  className="flex items-center justify-center gap-1 py-1 px-1 rounded-lg text-[10px] font-semibold text-emerald-400 hover:bg-emerald-500/10 border border-emerald-500/20 transition cursor-pointer"
                   title="Data Safety Vault & 1-Click Backup (ڈیٹا سیفٹی والٹ)"
                 >
                   <Database className="w-3 h-3 shrink-0" />
@@ -258,7 +274,7 @@ export default function Sidebar({
                     onOpenChangePassword();
                     if (onClose) onClose();
                   }}
-                  className="flex items-center justify-center gap-1 py-1 px-1.5 rounded-lg text-[10px] font-semibold text-amber-400 hover:bg-amber-500/10 border border-amber-500/20 transition cursor-pointer"
+                  className="flex items-center justify-center gap-1 py-1 px-1 rounded-lg text-[10px] font-semibold text-amber-400 hover:bg-amber-500/10 border border-amber-500/20 transition cursor-pointer"
                   title="Change Admin Password (پاس ورڈ تبدیل کریں)"
                 >
                   <KeyRound className="w-3 h-3 shrink-0" />
@@ -272,7 +288,7 @@ export default function Sidebar({
                     if (onClose) onClose();
                     onLogout();
                   }}
-                  className="flex items-center justify-center gap-1 py-1 px-1.5 rounded-lg text-[10px] font-semibold text-rose-400 hover:bg-rose-500/10 border border-rose-500/20 transition cursor-pointer"
+                  className="flex items-center justify-center gap-1 py-1 px-1 rounded-lg text-[10px] font-semibold text-rose-400 hover:bg-rose-500/10 border border-rose-500/20 transition cursor-pointer"
                   title="Sign Out of Session (لاگ آؤٹ)"
                 >
                   <LogOut className="w-3 h-3 shrink-0" />

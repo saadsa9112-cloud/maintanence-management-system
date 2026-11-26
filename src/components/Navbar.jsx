@@ -12,7 +12,11 @@ import {
   Check,
   Edit3,
   Search,
-  Globe
+  Globe,
+  Bell,
+  Cloud,
+  CloudCheck,
+  CloudOff
 } from 'lucide-react';
 import { sortMonthsChronologically } from '../utils/monthUtils';
 
@@ -32,7 +36,10 @@ export default function Navbar({
   onToggleFinalize,
   lang,
   onChangeLang,
-  t
+  t,
+  onOpenSyncDrawer,
+  syncLogsCount = 0,
+  cloudStatus = 'local_only' // 'synced' | 'connecting' | 'local_only' | 'error'
 }) {
   const [isMonthDropdownOpen, setIsMonthDropdownOpen] = useState(false);
   const dropdownRef = useRef(null);
@@ -241,6 +248,29 @@ export default function Navbar({
               Ctrl K
             </kbd>
           </button>
+
+          {/* Updates & Device Activity Bell */}
+          {onOpenSyncDrawer && (
+            <button
+              onClick={onOpenSyncDrawer}
+              className={`relative p-2 rounded-xl border transition cursor-pointer flex items-center justify-center ${
+                cloudStatus === 'synced'
+                  ? 'bg-emerald-50 text-emerald-700 border-emerald-200 hover:bg-emerald-100'
+                  : 'bg-slate-100 text-slate-700 border-slate-200 hover:bg-slate-200'
+              }`}
+              title="Updates & Device Activity Panel (موبائل اور کمپیوٹر اپ ڈیٹس)"
+            >
+              <Bell className="w-4 h-4" />
+              {syncLogsCount > 0 && (
+                <span className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-blue-600 text-white text-[9px] font-black flex items-center justify-center shadow-xs">
+                  {syncLogsCount > 9 ? '9+' : syncLogsCount}
+                </span>
+              )}
+              {cloudStatus === 'synced' && (
+                <span className="absolute -bottom-0.5 -right-0.5 w-2 h-2 rounded-full bg-emerald-500 border border-white" />
+              )}
+            </button>
+          )}
 
           {/* New Month Button */}
           <button
