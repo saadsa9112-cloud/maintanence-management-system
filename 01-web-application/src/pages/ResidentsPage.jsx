@@ -229,65 +229,65 @@ export default function ResidentsPage({
       </div>
 
       {/* KPI Status Strip with Owner vs Tenant Counts */}
-      <div className="grid grid-cols-2 sm:grid-cols-5 gap-3">
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2 sm:gap-3">
         <button
           onClick={() => setStatusFilter('all')}
-          className={`p-3.5 rounded-xl border text-start transition cursor-pointer ${
+          className={`p-2.5 sm:p-3.5 rounded-xl border text-start transition cursor-pointer ${
             statusFilter === 'all'
               ? 'bg-blue-600 text-white border-blue-600 shadow-xs font-bold'
               : 'erp-card text-slate-800 hover:border-slate-300'
           }`}
         >
-          <span className="text-[11px] font-semibold block opacity-80 uppercase tracking-wider">🏢 Total Units</span>
-          <span className="text-lg font-bold font-mono">{residents.length}</span>
+          <span className="text-[10px] sm:text-[11px] font-semibold block opacity-80 uppercase tracking-wider">🏢 Total Units</span>
+          <span className="text-base sm:text-lg font-bold font-mono">{residents.length}</span>
         </button>
 
         <button
           onClick={() => setStatusFilter('active')}
-          className={`p-3.5 rounded-xl border text-start transition cursor-pointer ${
+          className={`p-2.5 sm:p-3.5 rounded-xl border text-start transition cursor-pointer ${
             statusFilter === 'active'
               ? 'bg-emerald-600 text-white border-emerald-600 shadow-xs font-bold'
               : 'erp-card text-slate-800 hover:border-slate-300'
           }`}
         >
-          <span className="text-[11px] font-semibold block opacity-80 uppercase tracking-wider">🟢 Active</span>
-          <span className="text-lg font-bold font-mono">{activeCount}</span>
+          <span className="text-[10px] sm:text-[11px] font-semibold block opacity-80 uppercase tracking-wider">🟢 Active</span>
+          <span className="text-base sm:text-lg font-bold font-mono">{activeCount}</span>
         </button>
 
         <button
           onClick={() => setStatusFilter('closed')}
-          className={`p-3.5 rounded-xl border text-start transition cursor-pointer ${
+          className={`p-2.5 sm:p-3.5 rounded-xl border text-start transition cursor-pointer ${
             statusFilter === 'closed'
               ? 'bg-amber-600 text-white border-amber-600 shadow-xs font-bold'
               : 'erp-card text-slate-800 hover:border-slate-300'
           }`}
         >
-          <span className="text-[11px] font-semibold block opacity-80 uppercase tracking-wider">🔒 Locked</span>
-          <span className="text-lg font-bold font-mono">{closedCount}</span>
+          <span className="text-[10px] sm:text-[11px] font-semibold block opacity-80 uppercase tracking-wider">🔒 Locked</span>
+          <span className="text-base sm:text-lg font-bold font-mono">{closedCount}</span>
         </button>
 
         <button
           onClick={() => setStatusFilter('owner')}
-          className={`p-3.5 rounded-xl border text-start transition cursor-pointer ${
+          className={`p-2.5 sm:p-3.5 rounded-xl border text-start transition cursor-pointer ${
             statusFilter === 'owner'
               ? 'bg-blue-600 text-white border-blue-600 shadow-xs font-bold'
               : 'erp-card text-slate-800 hover:border-slate-300'
           }`}
         >
-          <span className="text-[11px] font-semibold block opacity-80 uppercase tracking-wider">🏠 Owners (مالک)</span>
-          <span className="text-lg font-bold font-mono">{ownerCount}</span>
+          <span className="text-[10px] sm:text-[11px] font-semibold block opacity-80 uppercase tracking-wider">🏠 Owners</span>
+          <span className="text-base sm:text-lg font-bold font-mono">{ownerCount}</span>
         </button>
 
         <button
           onClick={() => setStatusFilter('tenant')}
-          className={`p-3.5 rounded-xl border text-start transition cursor-pointer ${
+          className={`p-2.5 sm:p-3.5 rounded-xl border text-start transition cursor-pointer col-span-2 sm:col-span-1 ${
             statusFilter === 'tenant'
               ? 'bg-slate-900 text-white border-slate-900 shadow-xs font-bold'
               : 'erp-card text-slate-800 hover:border-slate-300'
           }`}
         >
-          <span className="text-[11px] font-semibold block opacity-80 uppercase tracking-wider">🔑 Tenants (کرایہ دار)</span>
-          <span className="text-lg font-bold font-mono">{tenantCount}</span>
+          <span className="text-[10px] sm:text-[11px] font-semibold block opacity-80 uppercase tracking-wider">🔑 Tenants</span>
+          <span className="text-base sm:text-lg font-bold font-mono">{tenantCount}</span>
         </button>
       </div>
 
@@ -332,14 +332,14 @@ export default function ResidentsPage({
       </div>
 
       {/* Residents Grid Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4">
         {filteredResidents.map(res => {
           const isClosed = res.status === 'closed';
 
           return (
             <div
               key={res.sno}
-              className={`erp-card rounded-2xl p-5 hover:border-slate-300 transition duration-200 flex flex-col justify-between border ${
+              className={`erp-card rounded-2xl p-3.5 sm:p-5 hover:border-slate-300 transition duration-200 flex flex-col justify-between border ${
                 isClosed
                   ? 'border-amber-300 bg-amber-50/30'
                   : 'border-slate-200/90 shadow-xs'

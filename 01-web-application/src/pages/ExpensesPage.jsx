@@ -160,37 +160,22 @@ export default function ExpensesPage({
       )}
 
       {/* Top Header Card */}
-      <div className="erp-card rounded-2xl p-5 sm:p-6 flex flex-col md:flex-row items-start md:items-center justify-between gap-4 border border-slate-200/90 shadow-xs">
-        <div>
+      <div className="erp-card rounded-2xl p-4 sm:p-6 flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3 sm:gap-4 border border-slate-200/90 shadow-xs">
+        <div className="space-y-2">
           <div className="flex items-center gap-2">
-            <div className="w-9 h-9 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center font-bold border border-amber-100">
+            <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center font-bold border border-amber-100 shrink-0">
               <Receipt className="w-4 h-4" />
             </div>
-            <h2 className="font-bold text-slate-900 text-lg sm:text-xl flex items-center gap-2 flex-wrap">
-              <span>{t.navExpenses}</span>
-              <span className="text-slate-400 font-light hidden sm:inline">/</span>
-              <select
-                value={activeMonthKey}
-                onChange={(e) => onSelectMonth && onSelectMonth(e.target.value)}
-                className="bg-white hover:bg-slate-50 text-xs sm:text-sm font-bold text-slate-900 border border-slate-300 rounded-lg px-2.5 py-1 focus:outline-none focus:ring-2 focus:ring-amber-500 cursor-pointer shadow-xs"
-                title="Switch active month sheet"
-              >
-                {sortedMonthKeys.map((k) => {
-                  const mData = allMonthsData[k] || {};
-                  return (
-                    <option key={k} value={k}>
-                      📅 {k} {mData.year ? `(${mData.year})` : ''} — {mData.name || k}
-                    </option>
-                  );
-                })}
-              </select>
+            <h2 className="font-extrabold text-slate-900 text-base sm:text-xl">
+              {t.navExpenses}
             </h2>
           </div>
-          <div className="flex flex-wrap items-center gap-2.5 mt-2">
-            <p className="text-xs text-slate-500">
+
+          <div className="flex flex-wrap items-center gap-2 text-xs">
+            <p className="text-xs text-slate-500 hidden sm:inline">
               {t.expensesRomanHint}
             </p>
-            <div className="flex items-center gap-1.5 bg-slate-50 hover:bg-white px-2.5 py-1 rounded-lg border border-slate-200 shadow-xs transition relative">
+            <div className="inline-flex items-center gap-1 bg-slate-50 hover:bg-white px-2 py-0.5 rounded-lg border border-slate-200 shadow-2xs transition relative">
               <div className="relative flex items-center cursor-pointer">
                 <input
                   type="date"
@@ -207,16 +192,12 @@ export default function ExpensesPage({
                 />
                 <Calendar className="w-3.5 h-3.5 text-slate-700 shrink-0 cursor-pointer" />
               </div>
-              <span className="text-slate-600 font-medium text-xs select-none">
-                {lang === 'ur' ? 'تاریخ:' : lang === 'roman' ? 'Tareekh:' : 'Date:'}
-              </span>
               <input
                 type="text"
                 value={dateStr || ''}
                 onChange={(e) => onUpdateDate && onUpdateDate(e.target.value)}
-                className="font-mono font-bold text-slate-900 bg-white px-1.5 py-0.5 rounded border border-slate-300 text-xs w-28 text-center focus:outline-none focus:ring-1 focus:ring-amber-500 cursor-text"
+                className="font-mono font-bold text-slate-900 bg-transparent text-xs w-24 text-center focus:outline-none"
                 placeholder="e.g. 3-Oct-2026"
-                title="Editable date: Is date ko aap type kar sakte hain ya calendar icon se select kar sakte hain"
               />
             </div>
           </div>
@@ -225,25 +206,25 @@ export default function ExpensesPage({
         <div className="flex items-center gap-2 flex-wrap">
           <button
             onClick={() => onNavigate && onNavigate('vendor-ledger')}
-            className="bg-slate-800 hover:bg-slate-700 text-white font-medium py-2 px-3.5 rounded-lg text-xs sm:text-sm flex items-center gap-1.5 transition shadow-xs border border-slate-700 cursor-pointer"
+            className="flex-1 sm:flex-none bg-slate-800 hover:bg-slate-700 text-white font-bold py-2 px-3 rounded-xl text-xs flex items-center justify-center gap-1.5 transition shadow-xs border border-slate-700 cursor-pointer"
             title="وینڈر و ٹھیکیدار لیجر دیکھیں"
           >
-            <span>👨‍🔧 Vendor Ledger (وینڈر کھاتہ)</span>
+            <span>👨‍🔧 Vendor Ledger</span>
           </button>
 
           <button
             onClick={() => setIsMultiMonthModalOpen(true)}
-            className="bg-slate-100 hover:bg-slate-200 text-slate-800 font-medium py-2 px-3.5 rounded-lg text-xs sm:text-sm flex items-center gap-1.5 transition border border-slate-300 cursor-pointer"
+            className="flex-1 sm:flex-none bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold py-2 px-3 rounded-xl text-xs flex items-center justify-center gap-1.5 transition border border-slate-300 cursor-pointer"
             title="تمام مہینوں کے بلوں اور اخراجات کا تاریخی تقابلی جائزہ"
           >
-            <Zap className="w-4 h-4 text-amber-500" />
-            <span>📊 All Months History (ہر مہینے کا ریکارڈ)</span>
+            <Zap className="w-3.5 h-3.5 text-amber-500" />
+            <span>📊 All Months</span>
           </button>
 
           {!isFinalized && (
             <button
               onClick={handleAddExpense}
-              className="bg-amber-600 hover:bg-amber-500 text-white font-semibold py-2 px-3.5 rounded-lg text-xs sm:text-sm flex items-center gap-1.5 transition shadow-xs cursor-pointer"
+              className="w-full sm:w-auto bg-amber-600 hover:bg-amber-500 text-white font-bold py-2 px-3.5 rounded-xl text-xs flex items-center justify-center gap-1.5 transition shadow-xs cursor-pointer"
             >
               <Plus className="w-4 h-4" />
               <span>{t.addExpense}</span>
@@ -253,7 +234,7 @@ export default function ExpensesPage({
       </div>
 
       {/* Financial Reconciliation Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-4">
         {/* Previous Month Balance */}
         <div className="erp-card rounded-2xl p-5 border border-slate-200/90 shadow-xs flex flex-col justify-between">
           <div>
