@@ -132,8 +132,8 @@ export default function CircularModal({
   };
 
   return (
-    <div className="fixed inset-0 bg-slate-950/70 backdrop-blur-md z-50 flex items-center justify-center p-3 sm:p-5 overflow-y-auto">
-      <div className="backdrop-blur-2xl bg-white/95 rounded-3xl shadow-[0_25px_70px_rgba(0,0,0,0.5)] border border-white/80 w-full max-w-4xl max-h-[92vh] flex flex-col overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+    <div className="fixed inset-0 bg-slate-950/70 backdrop-blur-md z-50 flex items-center justify-center p-2.5 sm:p-5 overflow-y-auto">
+      <div className="backdrop-blur-2xl bg-white/95 rounded-2xl sm:rounded-3xl shadow-[0_25px_70px_rgba(0,0,0,0.5)] border border-white/80 w-full max-w-4xl max-h-[92vh] flex flex-col overflow-hidden animate-in fade-in zoom-in-95 duration-200 my-auto">
         
         {/* Header */}
         <div className="p-4 sm:p-5 border-b border-slate-200/80 flex items-center justify-between bg-slate-50/70 shrink-0">
@@ -309,24 +309,24 @@ export default function CircularModal({
           <div className="text-xs text-slate-500 font-medium">
             💡 Notice ready for WhatsApp Group Broadcast and Official Notice Board
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 w-full sm:w-auto">
             <button
               onClick={handleCopyNotice}
-              className="backdrop-blur-md bg-white hover:bg-slate-100 text-slate-800 font-black text-xs px-4 py-2.5 rounded-2xl border border-slate-300 shadow-xs transition flex items-center gap-1.5 cursor-pointer"
+              className="backdrop-blur-md bg-white hover:bg-slate-100 text-slate-800 font-black text-xs px-4 py-2.5 rounded-2xl border border-slate-300 shadow-xs transition flex items-center justify-center gap-1.5 cursor-pointer w-full sm:w-auto"
             >
               {isCopied ? <Check className="w-4 h-4 text-emerald-600" /> : <Copy className="w-4 h-4 text-blue-600" />}
               <span>{isCopied ? 'Copied ✓' : 'Copy WhatsApp Text'}</span>
             </button>
             <button
               onClick={handleOpenWhatsApp}
-              className="backdrop-blur-md bg-emerald-600 hover:bg-emerald-700 text-white font-black text-xs px-4 py-2.5 rounded-2xl shadow-md shadow-emerald-600/20 transition flex items-center gap-1.5 cursor-pointer"
+              className="backdrop-blur-md bg-emerald-600 hover:bg-emerald-700 text-white font-black text-xs px-4 py-2.5 rounded-2xl shadow-md shadow-emerald-600/20 transition flex items-center justify-center gap-1.5 cursor-pointer w-full sm:w-auto"
             >
               <MessageCircle className="w-4 h-4" />
               <span>Share to WhatsApp Group</span>
             </button>
             <button
               onClick={() => window.print()}
-              className="backdrop-blur-md bg-slate-900 hover:bg-slate-800 text-white font-black text-xs px-4 py-2.5 rounded-2xl shadow-md transition flex items-center gap-1.5 cursor-pointer"
+              className="backdrop-blur-md bg-slate-900 hover:bg-slate-800 text-white font-black text-xs px-4 py-2.5 rounded-2xl shadow-md transition flex items-center justify-center gap-1.5 cursor-pointer w-full sm:w-auto"
             >
               <Printer className="w-4 h-4" />
               <span>Print Notice</span>

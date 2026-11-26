@@ -18,10 +18,10 @@ export default function FloorWiseAnalyticsModal({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-slate-950/70 backdrop-blur-md animate-fade-in no-print">
-      <div className="backdrop-blur-2xl bg-white/95 rounded-3xl border border-white/80 shadow-[0_20px_60px_rgba(0,0,0,0.3)] max-w-4xl w-full max-h-[90vh] flex flex-col overflow-hidden text-slate-900 relative">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-2.5 sm:p-4 bg-slate-950/70 backdrop-blur-md animate-fade-in no-print overflow-y-auto">
+      <div className="backdrop-blur-2xl bg-white/95 rounded-2xl sm:rounded-3xl border border-white/80 shadow-[0_20px_60px_rgba(0,0,0,0.3)] max-w-4xl w-full max-h-[92vh] flex flex-col overflow-hidden text-slate-900 relative my-auto">
         {/* Header */}
-        <div className="p-5 border-b border-slate-200/80 flex items-center justify-between bg-gradient-to-r from-blue-50/70 via-indigo-50/40 to-white">
+        <div className="p-3.5 sm:p-5 border-b border-slate-200/80 flex items-center justify-between bg-gradient-to-r from-blue-50/70 via-indigo-50/40 to-white">
           <div className="flex items-center gap-3">
             <div className="w-11 h-11 rounded-2xl bg-blue-600 text-white flex items-center justify-center shadow-md shadow-blue-600/30 font-bold shrink-0">
               <Building2 className="w-6 h-6" />
@@ -49,7 +49,7 @@ export default function FloorWiseAnalyticsModal({
         </div>
 
         {/* Top Summary Badges */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 p-4 bg-slate-50/80 border-b border-slate-200/70 text-xs">
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3 p-3 sm:p-4 bg-slate-50/80 border-b border-slate-200/70 text-xs">
           <div className="bg-white p-3 rounded-2xl border border-slate-200/80 shadow-2xs">
             <span className="text-[11px] font-bold text-slate-500 block">Total Building Floors</span>
             <span className="text-lg font-black text-slate-900">{analytics.floors.length} Floors</span>

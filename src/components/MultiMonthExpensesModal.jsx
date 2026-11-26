@@ -141,11 +141,11 @@ export default function MultiMonthExpensesModal({
   const allTimeGrandTotal = monthlyGrandTotals.reduce((a, b) => a + b, 0);
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-5 bg-slate-950/70 backdrop-blur-md animate-fade-in no-print-overlay">
-      <div className="backdrop-blur-2xl bg-white/95 rounded-3xl border border-white/80 shadow-[0_25px_60px_rgba(0,0,0,0.3)] max-w-5xl w-full max-h-[92vh] flex flex-col text-slate-900 overflow-hidden">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-2.5 sm:p-5 bg-slate-950/70 backdrop-blur-md animate-fade-in no-print-overlay overflow-y-auto">
+      <div className="backdrop-blur-2xl bg-white/95 rounded-2xl sm:rounded-3xl border border-white/80 shadow-[0_25px_60px_rgba(0,0,0,0.3)] max-w-5xl w-full max-h-[92vh] flex flex-col text-slate-900 overflow-hidden my-auto">
         
         {/* Modal Header */}
-        <div className="p-4 sm:p-5 border-b border-slate-200/80 bg-gradient-to-r from-blue-50/70 via-indigo-50/40 to-slate-50/70 flex items-center justify-between gap-3 shrink-0">
+        <div className="p-3.5 sm:p-5 border-b border-slate-200/80 bg-gradient-to-r from-blue-50/70 via-indigo-50/40 to-slate-50/70 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shrink-0">
           <div className="flex items-center gap-3 min-w-0">
             <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-blue-600 to-indigo-600 text-white flex items-center justify-center font-bold shadow-md shadow-blue-500/20 shrink-0">
               <Zap className="w-5 h-5 text-amber-300" />

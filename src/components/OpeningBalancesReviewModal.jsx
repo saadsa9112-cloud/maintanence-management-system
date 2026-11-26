@@ -50,8 +50,8 @@ export default function OpeningBalancesReviewModal({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-slate-950/70 backdrop-blur-md animate-fade-in no-print-overlay">
-      <div className="backdrop-blur-2xl bg-white/95 rounded-3xl border border-white/80 shadow-[0_20px_50px_rgba(0,0,0,0.25)] max-w-3xl w-full p-5 sm:p-6 text-slate-900 relative space-y-4 max-h-[90vh] flex flex-col">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-2.5 sm:p-4 bg-slate-950/70 backdrop-blur-md animate-fade-in no-print-overlay overflow-y-auto">
+      <div className="backdrop-blur-2xl bg-white/95 rounded-2xl sm:rounded-3xl border border-white/80 shadow-[0_20px_50px_rgba(0,0,0,0.25)] max-w-3xl w-full p-4 sm:p-6 text-slate-900 relative space-y-4 max-h-[92vh] flex flex-col my-auto">
         {/* Header */}
         <div className="flex items-center justify-between border-b border-slate-200 pb-3">
           <div className="flex items-center gap-2.5">
@@ -86,8 +86,8 @@ export default function OpeningBalancesReviewModal({
         </div>
 
         {/* Table of Months */}
-        <div className="overflow-y-auto flex-1 rounded-2xl border border-slate-200/80 bg-slate-50/50">
-          <table className="w-full text-left text-xs">
+        <div className="overflow-x-auto overflow-y-auto flex-1 rounded-2xl border border-slate-200/80 bg-slate-50/50">
+          <table className="w-full text-left text-xs min-w-[620px]">
             <thead className="bg-slate-100/90 text-slate-700 font-black border-b border-slate-200 sticky top-0">
               <tr>
                 <th className="p-3 text-center w-12">#</th>

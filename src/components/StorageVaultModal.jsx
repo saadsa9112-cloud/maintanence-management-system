@@ -101,16 +101,16 @@ export default function StorageVaultModal({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-slate-950/70 backdrop-blur-md animate-fade-in no-print">
-      <div className="backdrop-blur-2xl bg-white/95 rounded-3xl border border-white/80 shadow-[0_20px_60px_rgba(0,0,0,0.3)] max-w-3xl w-full max-h-[90vh] flex flex-col overflow-hidden text-slate-900 relative">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-2.5 sm:p-4 bg-slate-950/70 backdrop-blur-md animate-fade-in no-print overflow-y-auto">
+      <div className="backdrop-blur-2xl bg-white/95 rounded-2xl sm:rounded-3xl border border-white/80 shadow-[0_20px_60px_rgba(0,0,0,0.3)] max-w-3xl w-full max-h-[92vh] flex flex-col overflow-hidden text-slate-900 relative my-auto">
         {/* Header */}
-        <div className="p-5 border-b border-slate-200/80 flex items-center justify-between bg-gradient-to-r from-emerald-50/80 via-teal-50/40 to-white">
+        <div className="p-3.5 sm:p-5 border-b border-slate-200/80 flex items-center justify-between bg-gradient-to-r from-emerald-50/80 via-teal-50/40 to-white">
           <div className="flex items-center gap-3">
             <div className="w-11 h-11 rounded-2xl bg-emerald-600 text-white flex items-center justify-center shadow-md shadow-emerald-600/30 font-bold shrink-0">
               <ShieldCheck className="w-6 h-6" />
             </div>
             <div>
-              <div className="flex items-center gap-2">
+              <div className="flex flex-col sm:flex-row items-start sm:items-center gap-1.5 sm:gap-2">
                 <h3 className="font-black text-lg text-slate-900 tracking-tight">
                   💾 ڈیٹا سیفٹی والٹ و اسنیپ شاٹ ہسٹری (Local Vault & Backups)
                 </h3>
@@ -163,7 +163,7 @@ export default function StorageVaultModal({
           <label className="block text-xs font-bold text-slate-700 mb-1.5">
             📸 فوری دستی اسنیپ شاٹ بنائیں (Create Instant Safety Checkpoint):
           </label>
-          <div className="flex items-center gap-2">
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
             <input
               type="text"
               value={snapshotNote}

@@ -263,8 +263,8 @@ export default function MonthModal({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-slate-950/60 backdrop-blur-md z-50 flex items-center justify-center p-4 animate-fade-in no-print">
-      <div className="backdrop-blur-2xl bg-white/95 rounded-3xl shadow-[0_20px_60px_-15px_rgba(0,0,0,0.4)] p-6 sm:p-7 w-full max-w-sm space-y-4 border border-white/80 text-slate-900">
+    <div className="fixed inset-0 bg-slate-950/60 backdrop-blur-md z-50 flex items-center justify-center p-3 sm:p-4 overflow-y-auto animate-fade-in no-print">
+      <div className="backdrop-blur-2xl bg-white/95 rounded-2xl sm:rounded-3xl shadow-[0_20px_60px_-15px_rgba(0,0,0,0.4)] p-4 sm:p-7 w-full max-w-sm space-y-4 border border-white/80 text-slate-900 my-auto max-h-[92vh] overflow-y-auto">
         {/* Header */}
         <div className="flex items-center justify-between border-b border-slate-200/60 pb-3">
           <h3 className="font-black text-slate-900 text-lg flex items-center gap-2">

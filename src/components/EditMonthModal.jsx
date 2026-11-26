@@ -117,8 +117,8 @@ export default function EditMonthModal({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-5 bg-slate-950/75 backdrop-blur-md animate-fade-in no-print-overlay">
-      <div className="backdrop-blur-2xl bg-white/95 rounded-3xl border border-slate-200/90 shadow-[0_25px_60px_rgba(0,0,0,0.25)] max-w-2xl w-full p-5 sm:p-7 text-slate-900 relative space-y-4 max-h-[92vh] flex flex-col">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-2.5 sm:p-5 bg-slate-950/75 backdrop-blur-md animate-fade-in no-print-overlay overflow-y-auto">
+      <div className="backdrop-blur-2xl bg-white/95 rounded-2xl sm:rounded-3xl border border-slate-200/90 shadow-[0_25px_60px_rgba(0,0,0,0.25)] max-w-2xl w-full p-4 sm:p-7 text-slate-900 relative space-y-4 max-h-[92vh] flex flex-col my-auto">
         
         {/* Header */}
         <div className="flex items-center justify-between border-b border-slate-200 pb-3.5">
