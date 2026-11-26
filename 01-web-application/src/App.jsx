@@ -14,6 +14,14 @@ import GlobalSearchModal from './components/GlobalSearchModal';
 import LoginPage from './components/LoginPage';
 import ChangePasswordModal from './components/ChangePasswordModal';
 import StorageVaultModal from './components/StorageVaultModal';
+import SyncNotificationDrawer from './components/SyncNotificationDrawer';
+import FirebaseSetupModal from './components/FirebaseSetupModal';
+import {
+  getSavedFirebaseConfig,
+  getStoredSyncLogs,
+  subscribeToCloudBuildingData,
+  pushDataToCloud
+} from './services/firebaseSync';
 import {
   saveStateToIndexedDB,
   createVaultSnapshot,
@@ -306,6 +314,11 @@ export default function App() {
   const [isEditMonthModalOpen, setIsEditMonthModalOpen] = useState(false);
   const [isGlobalSearchOpen, setIsGlobalSearchOpen] = useState(false);
   const [isVaultModalOpen, setIsVaultModalOpen] = useState(false);
+  const [isSyncDrawerOpen, setIsSyncDrawerOpen] = useState(false);
+  const [isFirebaseSetupOpen, setIsFirebaseSetupOpen] = useState(false);
+  const [cloudStatus, setCloudStatus] = useState(() => getSavedFirebaseConfig() ? 'connecting' : 'local_only');
+  const [syncLogs, setSyncLogs] = useState(() => getStoredSyncLogs());
+  const [isSyncing, setIsSyncing] = useState(false);
   const [backupReminder, setBackupReminder] = useState(() => checkBackupReminderStatus());
   const [dismissReminder, setDismissReminder] = useState(false);
   const [toast, setToast] = useState(null);
@@ -385,6 +398,42 @@ export default function App() {
     } catch (e) {
       console.error('Failed to save data:', e);
     }
+  }, [data]);
+
+  // Real-time Cloud 2-Way Sync Listener (PC <-> Mobile via Firebase Firestore)
+  useEffect(() => {
+    const unsubscribe = subscribeToCloudBuildingData(
+      ({ data: remoteData, syncLogs: remoteLogs }) => {
+        if (remoteData) {
+          setData(remoteData);
+          dataRef.current = remoteData;
+          persistDataToDisk(remoteData);
+        }
+        if (Array.isArray(remoteLogs) && remoteLogs.length > 0) {
+          setSyncLogs(remoteLogs);
+        }
+      },
+      (status) => {
+        setCloudStatus(status);
+      }
+    );
+
+    return () => {
+      if (unsubscribe) unsubscribe();
+    };
+  }, []);
+
+  // Debounced Auto-Push to Cloud when state updates
+  const isInitialMount = useRef(true);
+  useEffect(() => {
+    if (isInitialMount.current) {
+      isInitialMount.current = false;
+      return;
+    }
+    const timer = setTimeout(() => {
+      pushDataToCloud(data, 'Record Updated', 'Data automatically synced to cloud');
+    }, 1500);
+    return () => clearTimeout(timer);
   }, [data]);
 
   // Save language to localStorage
@@ -1164,6 +1213,7 @@ export default function App() {
         onLogout={handleLogout}
         onOpenChangePassword={() => setIsChangePasswordModalOpen(true)}
         onOpenVaultModal={() => setIsVaultModalOpen(true)}
+        onOpenCloudSetup={() => setIsFirebaseSetupOpen(true)}
       />
 
       {/* Main Content Area */}
@@ -1186,6 +1236,9 @@ export default function App() {
           lang={lang}
           onChangeLang={setLang}
           t={t}
+          onOpenSyncDrawer={() => setIsSyncDrawerOpen(true)}
+          syncLogsCount={syncLogs.length}
+          cloudStatus={cloudStatus}
         />
 
         {/* Automatic Safety Backup Reminder Banner */}
@@ -1498,6 +1551,41 @@ export default function App() {
             setActiveMonthKey(restored.activeMonth);
           }
           showToast('System snapshot restored successfully! 🛡️✓');
+        }}
+        onNotify={showToast}
+      />
+
+      {/* Real-time Updates & Device Activity Drawer */}
+      <SyncNotificationDrawer
+        isOpen={isSyncDrawerOpen}
+        onClose={() => setIsSyncDrawerOpen(false)}
+        syncLogs={syncLogs}
+        cloudStatus={cloudStatus}
+        onClearLogs={() => {
+          localStorage.removeItem('amh_sync_activity_logs_v1');
+          setSyncLogs([]);
+          showToast('نوٹیفکیشن ہسٹری صاف کر دی گئی! 🧹');
+        }}
+        onOpenCloudSetup={() => {
+          setIsSyncDrawerOpen(false);
+          setIsFirebaseSetupOpen(true);
+        }}
+        onForceSyncNow={async () => {
+          setIsSyncing(true);
+          await pushDataToCloud(data, 'Manual Force Sync', 'Synchronized manually from active device');
+          setIsSyncing(false);
+          showToast('کلاؤڈ کے ساتھ کامیابی سے ہم آہنگ ہو گیا! ☁️✓');
+        }}
+        isSyncing={isSyncing}
+      />
+
+      {/* Firebase Cloud 2-Way Sync Setup Modal */}
+      <FirebaseSetupModal
+        isOpen={isFirebaseSetupOpen}
+        onClose={() => setIsFirebaseSetupOpen(false)}
+        fullData={data}
+        onConfigSaved={(cfg) => {
+          setCloudStatus(cfg ? 'synced' : 'local_only');
         }}
         onNotify={showToast}
       />
