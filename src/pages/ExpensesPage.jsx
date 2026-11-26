@@ -349,8 +349,8 @@ export default function ExpensesPage({
           </span>
         </div>
 
-        <div className="overflow-x-auto">
-          <table className="w-full text-left text-xs sm:text-sm border-collapse">
+        <div className="overflow-x-auto" style={{ WebkitOverflowScrolling: 'touch' }}>
+          <table className="w-full min-w-[620px] text-left text-xs sm:text-sm border-collapse">
             <thead className="glass-table-head text-slate-700 border-b border-slate-200 text-xs font-black uppercase">
               <tr>
                 <th className="p-3 text-center w-12 border-r border-slate-200/60">{t.thSno}</th>

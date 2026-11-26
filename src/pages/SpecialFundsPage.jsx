@@ -739,8 +739,8 @@ export default function SpecialFundsPage({
               </div>
 
               {/* Collections Table */}
-              <div className="overflow-x-auto rounded-2xl border border-slate-200/80">
-                <table className="w-full text-left text-xs border-collapse">
+              <div className="overflow-x-auto rounded-2xl border border-slate-200/80" style={{ WebkitOverflowScrolling: 'touch' }}>
+                <table className="w-full min-w-[650px] text-left text-xs border-collapse">
                   <thead className="bg-slate-100/90 text-slate-700 font-black border-b border-slate-200 text-xs uppercase tracking-wider select-none">
                     <tr>
                       <th className="p-3 text-center w-12 border-r border-slate-200/60">#</th>
@@ -925,8 +925,8 @@ export default function SpecialFundsPage({
                 </button>
               </div>
 
-              <div className="overflow-x-auto rounded-2xl border border-slate-200/80">
-                <table className="w-full text-left text-xs border-collapse">
+              <div className="overflow-x-auto rounded-2xl border border-slate-200/80" style={{ WebkitOverflowScrolling: 'touch' }}>
+                <table className="w-full min-w-[650px] text-left text-xs border-collapse">
                   <thead className="bg-slate-100/90 text-slate-700 font-black border-b border-slate-200 text-xs uppercase tracking-wider">
                     <tr>
                       <th className="p-3 text-center w-12 border-r border-slate-200/60">#</th>

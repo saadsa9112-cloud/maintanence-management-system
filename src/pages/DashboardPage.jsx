@@ -571,91 +571,91 @@ export default function DashboardPage({
       {/* ======================================================== */}
       {/* 2. FOUR KEY FINANCIAL METRIC CARDS                        */}
       {/* ======================================================== */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-4">
         {/* Card 1: Total Collections */}
-        <div className="erp-card rounded-2xl p-5 hover:border-slate-300 transition duration-200 border border-slate-200/90 shadow-xs flex flex-col justify-between">
+        <div className="erp-card rounded-2xl p-3.5 sm:p-5 hover:border-slate-300 transition duration-200 border border-slate-200/90 shadow-xs flex flex-col justify-between">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">{t.totalCollections}</span>
-            <div className="w-8 h-8 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center font-bold border border-emerald-100">
-              <TrendingUp className="w-4 h-4" />
+            <span className="text-[10px] sm:text-xs font-semibold text-slate-500 uppercase tracking-wider">{t.totalCollections}</span>
+            <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center font-bold border border-emerald-100 shrink-0">
+              <TrendingUp className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
             </div>
           </div>
-          <div className="mt-3">
-            <h3 className="text-2xl font-bold font-mono text-slate-900 tracking-tight">
+          <div className="mt-2 sm:mt-3">
+            <h3 className="text-lg sm:text-2xl font-bold font-mono text-slate-900 tracking-tight">
               Rs. {totalCollected.toLocaleString('en-US')}
             </h3>
-            <div className="mt-2 flex items-center justify-between text-xs text-slate-500">
-              <span className="font-semibold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-100">✓ {collectionRate}% of Target</span>
-              <span className="text-slate-400 font-mono text-[11px]">{paidFlats.length}/{activeCount} units</span>
+            <div className="mt-1.5 sm:mt-2 flex items-center justify-between text-[10px] sm:text-xs text-slate-500 flex-wrap gap-1">
+              <span className="font-semibold text-emerald-600 bg-emerald-50 px-1.5 sm:px-2 py-0.5 rounded border border-emerald-100">✓ {collectionRate}%</span>
+              <span className="text-slate-400 font-mono text-[10px] sm:text-[11px]">{paidFlats.length}/{activeCount}</span>
             </div>
           </div>
         </div>
 
         {/* Card 2: Pending Arrears */}
-        <div className="erp-card rounded-2xl p-5 hover:border-slate-300 transition duration-200 border border-slate-200/90 shadow-xs flex flex-col justify-between">
+        <div className="erp-card rounded-2xl p-3.5 sm:p-5 hover:border-slate-300 transition duration-200 border border-slate-200/90 shadow-xs flex flex-col justify-between">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">{t.unpaidFlats}</span>
-            <div className="w-8 h-8 rounded-lg bg-rose-50 text-rose-600 flex items-center justify-center font-bold border border-rose-100">
-              <AlertTriangle className="w-4 h-4" />
+            <span className="text-[10px] sm:text-xs font-semibold text-slate-500 uppercase tracking-wider">{t.unpaidFlats}</span>
+            <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-rose-50 text-rose-600 flex items-center justify-center font-bold border border-rose-100 shrink-0">
+              <AlertTriangle className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
             </div>
           </div>
-          <div className="mt-3">
-            <h3 className="text-2xl font-bold font-mono text-rose-600 tracking-tight">
+          <div className="mt-2 sm:mt-3">
+            <h3 className="text-lg sm:text-2xl font-bold font-mono text-rose-600 tracking-tight">
               Rs. {totalArrears.toLocaleString('en-US')}
             </h3>
-            <div className="mt-2 flex items-center justify-between text-xs text-slate-500">
-              <span className="font-semibold text-rose-600 bg-rose-50 px-2 py-0.5 rounded border border-rose-100">{unpaidFlats.length} flats pending</span>
+            <div className="mt-1.5 sm:mt-2 flex items-center justify-between text-[10px] sm:text-xs text-slate-500 flex-wrap gap-1">
+              <span className="font-semibold text-rose-600 bg-rose-50 px-1.5 sm:px-2 py-0.5 rounded border border-rose-100">{unpaidFlats.length} pending</span>
               <button
                 onClick={() => onNavigate('collections')}
-                className="font-medium text-slate-700 hover:text-blue-600 flex items-center gap-0.5 cursor-pointer text-xs"
+                className="font-medium text-slate-700 hover:text-blue-600 flex items-center gap-0.5 cursor-pointer text-[10px] sm:text-xs"
               >
                 <span>Inspect</span>
-                <ChevronRight className="w-3.5 h-3.5" />
+                <ChevronRight className="w-3 h-3" />
               </button>
             </div>
           </div>
         </div>
 
         {/* Card 3: Total Expenses */}
-        <div className="erp-card rounded-2xl p-5 hover:border-slate-300 transition duration-200 border border-slate-200/90 shadow-xs flex flex-col justify-between">
+        <div className="erp-card rounded-2xl p-3.5 sm:p-5 hover:border-slate-300 transition duration-200 border border-slate-200/90 shadow-xs flex flex-col justify-between">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">{t.totalExpenses}</span>
-            <div className="w-8 h-8 rounded-lg bg-amber-50 text-amber-600 flex items-center justify-center font-bold border border-amber-100">
-              <Receipt className="w-4 h-4" />
+            <span className="text-[10px] sm:text-xs font-semibold text-slate-500 uppercase tracking-wider">{t.totalExpenses}</span>
+            <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-amber-50 text-amber-600 flex items-center justify-center font-bold border border-amber-100 shrink-0">
+              <Receipt className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
             </div>
           </div>
-          <div className="mt-3">
-            <h3 className="text-2xl font-bold font-mono text-slate-900 tracking-tight">
+          <div className="mt-2 sm:mt-3">
+            <h3 className="text-lg sm:text-2xl font-bold font-mono text-slate-900 tracking-tight">
               Rs. {totalExpenses.toLocaleString('en-US')}
             </h3>
-            <div className="mt-2 flex items-center justify-between text-xs text-slate-500">
-              <span className="text-slate-500">{expenses.length} expense heads</span>
+            <div className="mt-1.5 sm:mt-2 flex items-center justify-between text-[10px] sm:text-xs text-slate-500 flex-wrap gap-1">
+              <span className="text-slate-500">{expenses.length} heads</span>
               <button
                 onClick={() => onNavigate('expenses')}
-                className="font-medium text-slate-700 hover:text-blue-600 flex items-center gap-0.5 cursor-pointer text-xs"
+                className="font-medium text-slate-700 hover:text-blue-600 flex items-center gap-0.5 cursor-pointer text-[10px] sm:text-xs"
               >
                 <span>Breakdown</span>
-                <ChevronRight className="w-3.5 h-3.5" />
+                <ChevronRight className="w-3 h-3" />
               </button>
             </div>
           </div>
         </div>
 
         {/* Card 4: Net Balance (Cash in Hand) */}
-        <div className="erp-card rounded-2xl p-5 hover:border-slate-300 transition duration-200 border border-slate-200/90 shadow-xs flex flex-col justify-between">
+        <div className="erp-card rounded-2xl p-3.5 sm:p-5 hover:border-slate-300 transition duration-200 border border-slate-200/90 shadow-xs flex flex-col justify-between">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">{t.netSavings}</span>
-            <div className="w-8 h-8 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center font-bold border border-blue-100">
-              <Wallet className="w-4 h-4" />
+            <span className="text-[10px] sm:text-xs font-semibold text-slate-500 uppercase tracking-wider">{t.netSavings}</span>
+            <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center font-bold border border-blue-100 shrink-0">
+              <Wallet className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
             </div>
           </div>
-          <div className="mt-3">
-            <h3 className={`text-2xl font-bold font-mono tracking-tight ${closingBalance >= 0 ? 'text-slate-900' : 'text-rose-600'}`}>
+          <div className="mt-2 sm:mt-3">
+            <h3 className={`text-lg sm:text-2xl font-bold font-mono tracking-tight ${closingBalance >= 0 ? 'text-slate-900' : 'text-rose-600'}`}>
               Rs. {closingBalance.toLocaleString('en-US')}
             </h3>
-            <div className="mt-2 flex items-center justify-between text-xs text-slate-500">
+            <div className="mt-1.5 sm:mt-2 flex items-center justify-between text-[10px] sm:text-xs text-slate-500 flex-wrap gap-1">
               <span>Opening: <strong className="font-mono text-slate-700">Rs. {prevSavings.toLocaleString('en-US')}</strong></span>
-              <span className="font-semibold text-blue-600 bg-blue-50 px-2 py-0.5 rounded border border-blue-100">Net Reserve</span>
+              <span className="font-semibold text-blue-600 bg-blue-50 px-1.5 sm:px-2 py-0.5 rounded border border-blue-100">Reserve</span>
             </div>
           </div>
         </div>
