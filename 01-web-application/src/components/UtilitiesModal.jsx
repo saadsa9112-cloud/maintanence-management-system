@@ -91,8 +91,8 @@ export default function UtilitiesModal({
   };
 
   return (
-    <div className="fixed inset-0 bg-slate-950/70 backdrop-blur-md z-50 flex items-center justify-center p-3 sm:p-5 overflow-y-auto">
-      <div className="backdrop-blur-2xl bg-white/95 rounded-3xl shadow-[0_25px_70px_rgba(0,0,0,0.5)] border border-white/80 w-full max-w-3xl overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+    <div className="fixed inset-0 bg-slate-950/70 backdrop-blur-md z-50 flex items-center justify-center p-2.5 sm:p-5 overflow-y-auto">
+      <div className="backdrop-blur-2xl bg-white/95 rounded-2xl sm:rounded-3xl shadow-[0_25px_70px_rgba(0,0,0,0.5)] border border-white/80 w-full max-w-3xl overflow-hidden animate-in fade-in zoom-in-95 duration-200 my-auto max-h-[92vh] flex flex-col">
         
         {/* Header */}
         <div className="p-4 sm:p-5 border-b border-slate-200/80 flex items-center justify-between bg-slate-50/70">
@@ -148,7 +148,7 @@ export default function UtilitiesModal({
 
         {/* Tab 1: Water Tankers */}
         {activeTab === 'tankers' && (
-          <div className="p-4 sm:p-6 space-y-5">
+          <div className="p-4 sm:p-6 space-y-5 flex-1 overflow-y-auto">
             {/* KPI Summary Banner */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div className="p-3.5 rounded-2xl bg-cyan-50/80 border border-cyan-200 flex items-center justify-between">
@@ -271,7 +271,7 @@ export default function UtilitiesModal({
 
         {/* Tab 2: Common Sub-Meter Calculator */}
         {activeTab === 'meter' && (
-          <div className="p-4 sm:p-6 space-y-5">
+          <div className="p-4 sm:p-6 space-y-5 flex-1 overflow-y-auto">
             <div className="p-4 rounded-2xl bg-amber-500/10 border border-amber-400/40 text-xs text-amber-900 leading-relaxed font-medium">
               💡 Calculate common electricity consumption for water pumping motor, common corridors, and lift. Easily push the computed bill into the active month's Expenses.
             </div>

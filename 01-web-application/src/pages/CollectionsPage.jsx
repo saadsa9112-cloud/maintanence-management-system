@@ -186,8 +186,8 @@ export default function CollectionsPage({
     const trueAdvance = Math.max(0, paidNum - totalLiability);
 
     return (
-      <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-md animate-fade-in no-print-overlay">
-        <div className="backdrop-blur-2xl bg-white/95 rounded-3xl border border-white/80 shadow-[0_20px_50px_rgba(0,0,0,0.25)] max-w-md w-full p-6 text-slate-900 relative">
+      <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-slate-950/60 backdrop-blur-md animate-fade-in no-print-overlay overflow-y-auto">
+        <div className="backdrop-blur-2xl bg-white/95 rounded-2xl sm:rounded-3xl border border-white/80 shadow-[0_20px_50px_rgba(0,0,0,0.25)] max-w-md w-full p-4 sm:p-6 text-slate-900 relative my-auto max-h-[94vh] overflow-y-auto">
           <button
             onClick={() => setReceiptModalFlat(null)}
             className="absolute top-4 right-4 p-2 rounded-full hover:bg-slate-100 text-slate-400 hover:text-slate-700 transition"
@@ -280,7 +280,7 @@ export default function CollectionsPage({
           </div>
 
           {/* Actions */}
-          <div className="grid grid-cols-2 gap-3 mt-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-3 mt-4 sm:mt-6">
             <button
               onClick={() => openSingleReceiptWhatsApp(receiptModalFlat, monthName, buildingName, lang, dateStr)}
               className="backdrop-blur-md bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2.5 px-3 rounded-2xl text-xs flex items-center justify-center gap-1.5 shadow-md shadow-emerald-600/20 transition cursor-pointer"
@@ -305,8 +305,8 @@ export default function CollectionsPage({
   const renderDefaultersNoticeModal = () => {
     if (!isDefaultersNoticeOpen) return null;
     return (
-      <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-md animate-fade-in no-print-overlay">
-        <div className="backdrop-blur-2xl bg-white/95 rounded-3xl border border-white/80 shadow-[0_20px_50px_rgba(0,0,0,0.25)] max-w-lg w-full p-6 text-slate-900 relative space-y-4">
+      <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-slate-950/60 backdrop-blur-md animate-fade-in no-print-overlay overflow-y-auto">
+        <div className="backdrop-blur-2xl bg-white/95 rounded-2xl sm:rounded-3xl border border-white/80 shadow-[0_20px_50px_rgba(0,0,0,0.25)] max-w-lg w-full p-4 sm:p-6 text-slate-900 relative space-y-3 sm:space-y-4 my-auto max-h-[94vh] flex flex-col">
           <div className="flex items-center justify-between border-b border-slate-200 pb-3">
             <div className="flex items-center gap-2.5">
               <div className="w-10 h-10 rounded-2xl bg-rose-600/15 text-rose-700 flex items-center justify-center font-bold">
@@ -413,7 +413,7 @@ export default function CollectionsPage({
             <p className="text-[11px] text-slate-600 font-bold text-right pt-1">— Maintenance Managed by: Hafiz Muhammad Saad</p>
           </div>
 
-          <div className="grid grid-cols-2 gap-3 pt-1">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-3 pt-1">
             <button
               onClick={() => {
                 let msg = `🚨 *${buildingName} — FORMAL DUES NOTICE (${monthName})*\n`;

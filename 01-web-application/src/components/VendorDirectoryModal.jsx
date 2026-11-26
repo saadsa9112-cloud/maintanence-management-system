@@ -78,8 +78,8 @@ export default function VendorDirectoryModal({
   };
 
   return (
-    <div className="fixed inset-0 bg-slate-950/70 backdrop-blur-md z-50 flex items-center justify-center p-3 sm:p-5 overflow-y-auto">
-      <div className="backdrop-blur-2xl bg-white/95 rounded-3xl shadow-[0_25px_70px_rgba(0,0,0,0.5)] border border-white/80 w-full max-w-3xl overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+    <div className="fixed inset-0 bg-slate-950/70 backdrop-blur-md z-50 flex items-center justify-center p-2.5 sm:p-5 overflow-y-auto">
+      <div className="backdrop-blur-2xl bg-white/95 rounded-2xl sm:rounded-3xl shadow-[0_25px_70px_rgba(0,0,0,0.5)] border border-white/80 w-full max-w-3xl overflow-hidden animate-in fade-in zoom-in-95 duration-200 my-auto max-h-[92vh] flex flex-col">
         
         {/* Header */}
         <div className="p-4 sm:p-5 border-b border-slate-200/80 flex items-center justify-between bg-slate-50/70">
@@ -108,7 +108,7 @@ export default function VendorDirectoryModal({
         </div>
 
         {/* Content */}
-        <div className="p-4 sm:p-6 space-y-5 max-h-[75vh] overflow-y-auto">
+        <div className="p-4 sm:p-6 space-y-5 flex-1 overflow-y-auto">
           
           {/* Emergency Helpline Strip */}
           <div>
