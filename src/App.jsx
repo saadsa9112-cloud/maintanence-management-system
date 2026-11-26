@@ -1275,7 +1275,7 @@ export default function App() {
         )}
 
         {/* Page Body Viewport */}
-        <main className="p-4 sm:p-6 lg:p-8 flex-1 max-w-7xl w-full mx-auto relative z-10">
+        <main className="p-2.5 sm:p-5 lg:p-8 flex-1 max-w-7xl w-full mx-auto relative z-10">
           <ErrorBoundary onReset={() => setActivePage('dashboard')}>
             {activePage === 'dashboard' && (
               <DashboardPage

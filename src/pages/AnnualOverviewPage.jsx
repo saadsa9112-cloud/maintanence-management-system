@@ -391,8 +391,8 @@ export default function AnnualOverviewPage({
             </div>
 
             {/* Interactive Sorted Table */}
-            <div className="overflow-x-auto">
-              <table className="w-full text-left text-xs sm:text-sm border-collapse">
+            <div className="overflow-x-auto" style={{ WebkitOverflowScrolling: 'touch' }}>
+              <table className="w-full min-w-[700px] text-left text-xs sm:text-sm border-collapse">
                 <thead>
                   <tr className="glass-table-head text-slate-800 font-extrabold border-b border-slate-300 text-xs select-none">
                     <th
@@ -604,8 +604,8 @@ export default function AnnualOverviewPage({
               </span>
             </div>
 
-            <div className="overflow-x-auto">
-              <table className="w-full text-left text-xs sm:text-sm border-collapse">
+            <div className="overflow-x-auto" style={{ WebkitOverflowScrolling: 'touch' }}>
+              <table className="w-full min-w-[1000px] text-left text-xs sm:text-sm border-collapse">
                 <thead>
                   <tr className="glass-table-head text-slate-800 font-extrabold border-b border-slate-300 text-xs">
                     <th className="p-3 text-center w-12">#</th>

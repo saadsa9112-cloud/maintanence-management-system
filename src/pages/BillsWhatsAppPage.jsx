@@ -410,10 +410,10 @@ export default function BillsWhatsAppPage({
       </div>
 
       {/* Tabs Navigation */}
-      <div className="flex items-center gap-2 border-b border-slate-200 pb-2">
+      <div className="flex items-center gap-2 border-b border-slate-200 pb-2 overflow-x-auto no-scrollbar max-w-full">
         <button
           onClick={() => setActiveTab('demand_slips')}
-          className={`flex items-center gap-2 px-4 py-2 rounded-2xl text-xs font-black transition cursor-pointer ${
+          className={`flex items-center gap-2 px-3 sm:px-4 py-2 rounded-2xl text-xs font-black transition cursor-pointer shrink-0 ${
             activeTab === 'demand_slips'
               ? 'bg-emerald-600 text-white shadow-sm'
               : 'bg-white hover:bg-slate-100 text-slate-700 border border-slate-200'
@@ -425,7 +425,7 @@ export default function BillsWhatsAppPage({
 
         <button
           onClick={() => setActiveTab('broadcast')}
-          className={`flex items-center gap-2 px-4 py-2 rounded-2xl text-xs font-black transition cursor-pointer ${
+          className={`flex items-center gap-2 px-3 sm:px-4 py-2 rounded-2xl text-xs font-black transition cursor-pointer shrink-0 ${
             activeTab === 'broadcast'
               ? 'bg-emerald-600 text-white shadow-sm'
               : 'bg-white hover:bg-slate-100 text-slate-700 border border-slate-200'
@@ -437,7 +437,7 @@ export default function BillsWhatsAppPage({
 
         <button
           onClick={() => setActiveTab('circulars')}
-          className={`flex items-center gap-2 px-4 py-2 rounded-2xl text-xs font-black transition cursor-pointer ${
+          className={`flex items-center gap-2 px-3 sm:px-4 py-2 rounded-2xl text-xs font-black transition cursor-pointer shrink-0 ${
             activeTab === 'circulars'
               ? 'bg-emerald-600 text-white shadow-sm'
               : 'bg-white hover:bg-slate-100 text-slate-700 border border-slate-200'

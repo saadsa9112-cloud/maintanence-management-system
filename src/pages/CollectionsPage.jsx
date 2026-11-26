@@ -113,7 +113,7 @@ export default function CollectionsPage({
 }) {
   const [filter, setFilter] = useState('all'); // 'all', 'arrears', 'paid', 'closed'
   const [search, setSearch] = useState('');
-  const [viewMode, setViewMode] = useState('grid'); // 'grid' | 'cards'
+  const [viewMode, setViewMode] = useState(() => (typeof window !== 'undefined' && window.innerWidth < 768 ? 'cards' : 'grid'));
   const [broadcastMode, setBroadcastMode] = useState('unpaid'); // 'unpaid' | 'paid'
   const [broadcastDetailMode, setBroadcastDetailMode] = useState('with_details'); // 'with_details' | 'only_flats'
   const [noticeDetailMode, setNoticeDetailMode] = useState('with_details'); // 'with_details' | 'only_flats'
@@ -829,72 +829,56 @@ export default function CollectionsPage({
       )}
 
       {/* Top Header Card */}
-      <div className="erp-card rounded-2xl p-5 sm:p-6 flex flex-col md:flex-row items-start md:items-center justify-between gap-4 border border-slate-200/90 shadow-xs">
-        <div>
-          <div className="flex items-center gap-2 flex-wrap">
-            <div className="w-9 h-9 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center font-bold border border-blue-100">
-              <Building2 className="w-4 h-4" />
+      <div className="erp-card rounded-2xl p-4 sm:p-6 flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3 sm:gap-4 border border-slate-200/90 shadow-xs">
+        <div className="space-y-2">
+          <div className="flex items-center justify-between md:justify-start gap-2 flex-wrap">
+            <div className="flex items-center gap-2">
+              <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center font-bold border border-blue-100 shrink-0">
+                <Building2 className="w-4 h-4" />
+              </div>
+              <h2 className="font-extrabold text-slate-900 text-base sm:text-xl">
+                {t.navCollections}
+              </h2>
             </div>
-            <h2 className="font-bold text-slate-900 text-lg sm:text-xl flex items-center gap-2 flex-wrap">
-              <span>{t.navCollections}</span>
-              <span className="text-slate-400 font-light hidden sm:inline">/</span>
-              <select
-                value={activeMonthKey}
-                onChange={(e) => onChangeMonth && onChangeMonth(e.target.value)}
-                className="bg-white hover:bg-slate-50 text-xs sm:text-sm font-bold text-slate-900 border border-slate-300 rounded-lg px-2.5 py-1 focus:outline-none focus:ring-2 focus:ring-blue-600 cursor-pointer shadow-xs"
-                title="Switch active month sheet"
-              >
-                {sortedMonthKeys.map((k) => {
-                  const mData = allMonthsData[k] || {};
-                  return (
-                    <option key={k} value={k}>
-                      📅 {k} {mData.year ? `(${mData.year})` : ''} — {mData.name || k}
-                    </option>
-                  );
-                })}
-              </select>
-            </h2>
-            {onOpenEditMonthModal && (
-              <button
-                onClick={onOpenEditMonthModal}
-                className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-medium text-slate-700 bg-white hover:bg-slate-50 hover:text-blue-600 border border-slate-300 transition cursor-pointer shadow-xs ml-1"
-                title="Edit Month Details (Name, Year, Date, Opening Balance) or Delete Month Sheet"
-              >
-                <Edit3 className="w-3.5 h-3.5 text-blue-600" />
-                <span>Edit / Delete Sheet</span>
-              </button>
-            )}
 
-            <button
-              onClick={() => onNavigate && onNavigate('bills-whatsapp')}
-              className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-medium text-emerald-800 bg-emerald-50 hover:bg-emerald-100 border border-emerald-300 transition cursor-pointer shadow-xs ml-1"
-              title="تمام فلیٹس کے ماہانہ مانگ بلز اور واٹس ایپ چٹس دیکھیں"
-            >
-              <span>🧾 Monthly Bills & WhatsApp (بلز سنٹر)</span>
-            </button>
-
-            {/* Feature 5: 100% Reconciled Official Stamp Badge */}
+            {/* Reconciled / Clash Badge */}
             {clashesReport.hasClashes ? (
               <button
                 onClick={() => setIsClashModalOpen(true)}
-                className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-bold bg-rose-100 hover:bg-rose-200 text-rose-800 border border-rose-300 transition cursor-pointer shadow-xs"
+                className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[11px] font-bold bg-rose-100 hover:bg-rose-200 text-rose-800 border border-rose-300 transition cursor-pointer shadow-xs shrink-0"
                 title="Active clashes detected! Click to inspect and reconcile"
               >
                 <AlertTriangle className="w-3.5 h-3.5 text-rose-600 animate-pulse" />
-                <span>⚠️ {clashesReport.totalCount} {clashesReport.totalCount > 1 ? 'Clashes' : 'Clash'} (Pending)</span>
+                <span>⚠️ {clashesReport.totalCount} Clash</span>
               </button>
             ) : (
-              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-bold bg-emerald-600 text-white shadow-xs select-none print:hidden">
+              <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[11px] font-bold bg-emerald-600 text-white shadow-xs select-none shrink-0 print:hidden">
                 <CheckCircle className="w-3.5 h-3.5 text-emerald-100" />
-                <span>🎖️ {lang === 'ur' ? 'مکمل جانچ شدہ و مصدقہ (100% Reconciled)' : '✓ 100% Reconciled & Audited'}</span>
+                <span>✓ 100% Reconciled</span>
               </div>
             )}
           </div>
-          <div className="flex flex-wrap items-center gap-2.5 mt-2">
-            <p className="text-xs text-slate-500">
-              {t.clickToEditHint}
-            </p>
-            <div className="flex items-center gap-1.5 bg-slate-50 hover:bg-white px-2.5 py-1 rounded-lg border border-slate-200 shadow-xs transition relative">
+
+          {/* Action pills & Date */}
+          <div className="flex flex-wrap items-center gap-2 text-xs">
+            <button
+              onClick={() => onNavigate && onNavigate('bills-whatsapp')}
+              className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-[11px] font-bold text-emerald-800 bg-emerald-50 hover:bg-emerald-100 border border-emerald-300 transition cursor-pointer shadow-2xs"
+            >
+              <span>🧾 Bills & WhatsApp</span>
+            </button>
+
+            {onOpenEditMonthModal && (
+              <button
+                onClick={onOpenEditMonthModal}
+                className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-[11px] font-bold text-slate-700 bg-white hover:bg-slate-50 hover:text-blue-600 border border-slate-300 transition cursor-pointer shadow-2xs"
+              >
+                <Edit3 className="w-3 h-3 text-blue-600" />
+                <span>Edit Sheet</span>
+              </button>
+            )}
+
+            <div className="inline-flex items-center gap-1 bg-slate-50 hover:bg-white px-2 py-0.5 rounded-lg border border-slate-200 shadow-2xs transition relative">
               <div className="relative flex items-center cursor-pointer">
                 <input
                   type="date"
@@ -907,20 +891,15 @@ export default function CollectionsPage({
                     if (onUpdateDate) onUpdateDate(formatted);
                   }}
                   className="opacity-0 absolute inset-0 w-full h-full cursor-pointer z-10"
-                  title="Calendar se date select karein"
                 />
                 <Calendar className="w-3.5 h-3.5 text-blue-600 shrink-0 cursor-pointer" />
               </div>
-              <span className="text-slate-600 font-medium text-xs select-none">
-                {lang === 'ur' ? 'تاریخ:' : lang === 'roman' ? 'Tareekh:' : 'Date:'}
-              </span>
               <input
                 type="text"
                 value={dateStr || ''}
                 onChange={(e) => onUpdateDate && onUpdateDate(e.target.value)}
-                className="font-mono font-bold text-slate-900 bg-white px-1.5 py-0.5 rounded border border-slate-300 text-xs w-28 text-center focus:outline-none focus:ring-1 focus:ring-blue-600 cursor-text"
+                className="font-mono font-bold text-slate-900 bg-transparent text-xs w-24 text-center focus:outline-none"
                 placeholder="e.g. 3-Oct-2026"
-                title="Editable date: Is date ko aap type kar sakte hain ya calendar icon se select kar sakte hain"
               />
             </div>
           </div>
@@ -954,27 +933,27 @@ export default function CollectionsPage({
       </div>
 
       {/* Live Financial Reconciliation Bar (Connected directly with Expenses) */}
-      <div className="erp-card-dark rounded-2xl p-5 sm:p-6 text-white shadow-xl border border-slate-800 flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4">
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 w-full lg:w-auto">
-          <div className="bg-slate-900/80 p-3 rounded-xl border border-slate-800">
+      <div className="erp-card-dark rounded-2xl p-4 sm:p-6 text-white shadow-xl border border-slate-800 flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-3 sm:gap-4">
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 sm:gap-3 w-full lg:w-auto">
+          <div className="bg-slate-900/80 p-2.5 sm:p-3 rounded-xl border border-slate-800">
             <span className="text-[10px] text-slate-400 block font-semibold uppercase tracking-wider">{t.totalCollections} (MR)</span>
             <span className="text-sm sm:text-base font-bold font-mono text-emerald-400">
               Rs. {totalPaid.toLocaleString('en-US')}
             </span>
           </div>
-          <div className="bg-slate-900/80 p-3 rounded-xl border border-slate-800">
+          <div className="bg-slate-900/80 p-2.5 sm:p-3 rounded-xl border border-slate-800">
             <span className="text-[10px] text-slate-400 block font-semibold uppercase tracking-wider">{t.previousSavings}</span>
             <span className="text-sm sm:text-base font-bold font-mono text-slate-200">
               Rs. {Number(prevSavings).toLocaleString('en-US')}
             </span>
           </div>
-          <div className="bg-slate-900/80 p-3 rounded-xl border border-slate-800">
+          <div className="bg-slate-900/80 p-2.5 sm:p-3 rounded-xl border border-slate-800">
             <span className="text-[10px] text-slate-400 block font-semibold uppercase tracking-wider">{t.totalExpenses}</span>
             <span className="text-sm sm:text-base font-bold font-mono text-rose-400">
               Rs. {totalExpenses.toLocaleString('en-US')}
             </span>
           </div>
-          <div className="bg-slate-900/80 p-3 rounded-xl border border-slate-800">
+          <div className="bg-slate-900/80 p-2.5 sm:p-3 rounded-xl border border-slate-800">
             <span className="text-[10px] text-slate-400 block font-semibold uppercase tracking-wider">{t.netSavings}</span>
             <span className={`text-sm sm:text-base font-bold font-mono ${closingBalance >= 0 ? 'text-blue-300' : 'text-rose-400'}`}>
               Rs. {closingBalance.toLocaleString('en-US')}
@@ -984,7 +963,7 @@ export default function CollectionsPage({
 
         <button
           onClick={() => onNavigate('expenses')}
-          className="w-full lg:w-auto bg-amber-500 hover:bg-amber-400 text-slate-950 font-semibold py-2.5 px-4 rounded-xl text-xs sm:text-sm transition flex items-center justify-center gap-1.5 shadow-sm shrink-0 cursor-pointer"
+          className="w-full lg:w-auto bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold py-2 sm:py-2.5 px-4 rounded-xl text-xs sm:text-sm transition flex items-center justify-center gap-1.5 shadow-sm shrink-0 cursor-pointer"
         >
           <Receipt className="w-4 h-4" />
           <span>{lang === 'ur' ? 'اخراجات درج کریں ➡️' : lang === 'roman' ? 'Ikhrajat Page Par Jayein ➡️' : 'Add / View Expenses ➡️'}</span>
@@ -1027,60 +1006,60 @@ export default function CollectionsPage({
           </div>
 
           {/* Scenario & Format Switcher Pills */}
-          <div className="flex flex-wrap items-center gap-2">
+          <div className="flex flex-wrap items-center gap-2 w-full md:w-auto">
             {/* Scenario Switcher: Unpaid vs Paid */}
-            <div className="flex items-center bg-slate-900/90 p-0.5 rounded-lg border border-slate-700 text-xs font-medium shrink-0">
+            <div className="flex items-center bg-slate-900/90 p-0.5 rounded-xl border border-slate-700 text-xs font-medium w-full sm:w-auto shadow-2xs">
               <button
                 onClick={() => {
                   setBroadcastMode('unpaid');
                   setFilter('arrears');
                 }}
-                className={`px-3 py-1 rounded-md transition cursor-pointer ${
+                className={`flex-1 sm:flex-none px-3 py-1.5 rounded-lg transition cursor-pointer text-center ${
                   broadcastMode === 'unpaid'
                     ? 'bg-rose-600 text-white shadow-xs font-bold'
                     : 'text-slate-400 hover:text-white'
                 }`}
               >
-                📢 Unpaid Alert ({unpaidFlats.length})
+                📢 Unpaid ({unpaidFlats.length})
               </button>
               <button
                 onClick={() => {
                   setBroadcastMode('paid');
                   setFilter('paid');
                 }}
-                className={`px-3 py-1 rounded-md transition cursor-pointer ${
+                className={`flex-1 sm:flex-none px-3 py-1.5 rounded-lg transition cursor-pointer text-center ${
                   broadcastMode === 'paid'
                     ? 'bg-emerald-600 text-white shadow-xs font-bold'
                     : 'text-slate-400 hover:text-white'
                 }`}
               >
-                ✅ Paid List ({paidFlats.length})
+                ✅ Paid ({paidFlats.length})
               </button>
             </div>
 
             {/* Format Switcher: With Details vs Only Flat Names */}
-            <div className="flex items-center bg-black/40 p-1 rounded-2xl border border-white/10 text-xs font-bold shrink-0">
+            <div className="flex items-center bg-black/40 p-0.5 rounded-xl border border-white/10 text-xs font-bold w-full sm:w-auto shadow-2xs">
               <button
                 onClick={() => setBroadcastDetailMode('with_details')}
-                className={`px-3 py-1.5 rounded-xl transition cursor-pointer ${
+                className={`flex-1 sm:flex-none px-2.5 py-1.5 rounded-lg transition cursor-pointer text-center text-[11px] ${
                   broadcastDetailMode === 'with_details'
                     ? 'bg-blue-600 text-white shadow-xs font-black'
                     : 'text-slate-400 hover:text-white'
                 }`}
                 title="فلیٹ نمبر اور رہائشی کا نام اور رقم کی تفصیل کے ساتھ"
               >
-                📋 With Details (نام کے ساتھ)
+                📋 With Details
               </button>
               <button
                 onClick={() => setBroadcastDetailMode('only_flats')}
-                className={`px-3 py-1.5 rounded-xl transition cursor-pointer ${
+                className={`flex-1 sm:flex-none px-2.5 py-1.5 rounded-lg transition cursor-pointer text-center text-[11px] ${
                   broadcastDetailMode === 'only_flats'
                     ? 'bg-amber-600 text-white shadow-xs font-black'
                     : 'text-slate-400 hover:text-white'
                 }`}
                 title="رہائشی کا نام ظاہر نہیں ہوگا، صرف فلیٹ نمبر آئے گا"
               >
-                🏢 Only Flat Names (صرف فلیٹ)
+                🏢 Flats Only
               </button>
             </div>
           </div>
@@ -1152,7 +1131,7 @@ export default function CollectionsPage({
         </div>
 
         {/* Action Buttons */}
-        <div className="flex items-center justify-end gap-2.5 pt-1">
+        <div className="grid grid-cols-2 sm:flex sm:items-center sm:justify-end gap-2 pt-1">
           <button
             onClick={() => {
               const includeNames = broadcastDetailMode === 'with_details';
@@ -1166,7 +1145,7 @@ export default function CollectionsPage({
                 if (onNotify) onNotify(`Unpaid Alert (${includeNames ? 'With Details' : 'Only Flat Names'}) copied! 📋`);
               }
             }}
-            className="backdrop-blur-md bg-white/10 hover:bg-white/20 text-white font-bold py-2 px-4 rounded-xl text-xs transition border border-white/20 shadow-xs cursor-pointer"
+            className="backdrop-blur-md bg-white/10 hover:bg-white/20 text-white font-bold py-2 px-3 rounded-xl text-xs transition border border-white/20 shadow-xs cursor-pointer text-center"
           >
             {t.copyMessage}
           </button>
@@ -1179,7 +1158,7 @@ export default function CollectionsPage({
                 openGroupWhatsApp(monthName, unpaidFlats, totalArrears, buildingName, lang, includeNames);
               }
             }}
-            className="backdrop-blur-md bg-emerald-600/90 hover:bg-emerald-600 text-white font-bold py-2 px-5 rounded-xl text-xs transition flex items-center gap-1.5 shadow-md shadow-emerald-600/30 border border-emerald-400/30 cursor-pointer"
+            className="backdrop-blur-md bg-emerald-600/90 hover:bg-emerald-600 text-white font-bold py-2 px-3 sm:px-5 rounded-xl text-xs transition flex items-center justify-center gap-1.5 shadow-md shadow-emerald-600/30 border border-emerald-400/30 cursor-pointer"
           >
             <MessageCircle className="w-4 h-4" />
             <span>{t.openWhatsApp}</span>
@@ -1187,21 +1166,21 @@ export default function CollectionsPage({
 
           <button
             onClick={() => setIsDigestModalOpen(true)}
-            className="backdrop-blur-md bg-gradient-to-r from-teal-600 to-emerald-600 hover:from-teal-500 hover:to-emerald-500 text-white font-black py-2 px-4 rounded-xl text-xs transition flex items-center gap-1.5 shadow-md shadow-emerald-600/30 border border-teal-300/40 cursor-pointer"
+            className="backdrop-blur-md bg-gradient-to-r from-teal-600 to-emerald-600 hover:from-teal-500 hover:to-emerald-500 text-white font-black py-2 px-3 rounded-xl text-xs transition flex items-center justify-center gap-1.5 shadow-md shadow-emerald-600/30 border border-teal-300/40 cursor-pointer"
             title="Generate visual WhatsApp Group Infographic Image"
           >
-            <Share2 className="w-4 h-4" />
-            <span>WhatsApp Digest Image 🖼️</span>
+            <Share2 className="w-3.5 h-3.5" />
+            <span>Digest 🖼️</span>
           </button>
 
           {unpaidFlats.length > 0 && (
             <button
               onClick={() => setIsDefaultersNoticeOpen(true)}
-              className="backdrop-blur-md bg-rose-600/90 hover:bg-rose-600 text-white font-bold py-2 px-4 rounded-xl text-xs transition flex items-center gap-1.5 shadow-md shadow-rose-600/30 border border-rose-400/30 cursor-pointer"
+              className="backdrop-blur-md bg-rose-600/90 hover:bg-rose-600 text-white font-bold py-2 px-3 rounded-xl text-xs transition flex items-center justify-center gap-1.5 shadow-md shadow-rose-600/30 border border-rose-400/30 cursor-pointer"
               title="Generate Formal Warning Notice for Defaulters"
             >
-              <AlertTriangle className="w-4 h-4" />
-              <span>{lang === 'ur' ? 'وارننگ نوٹس' : lang === 'roman' ? 'Defaulters Notice' : 'Formal Notice'}</span>
+              <AlertTriangle className="w-3.5 h-3.5" />
+              <span>{lang === 'ur' ? 'وارننگ نوٹس' : lang === 'roman' ? 'Notice' : 'Notice'}</span>
             </button>
           )}
         </div>
