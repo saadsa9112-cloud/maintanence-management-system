@@ -45,10 +45,9 @@ export default function ResidentLedgerModal({
     return sortMonthsChronologically(monthOrder && monthOrder.length > 0 ? monthOrder : Object.keys(allMonthsData || {}));
   }, [monthOrder, allMonthsData]);
 
-  if (!isOpen || !flat) return null;
-
-  // Build Chronological Ledger History for this specific flat across all existing months
+  // Build Chronological Ledger History for this specific flat across all existing months (Always run hooks at top)
   const ledgerHistory = useMemo(() => {
+    if (!flat) return [];
     return sortedMonthKeys.map(mKey => {
       const mData = allMonthsData[mKey] || {};
       const mName = mData.name || mKey;
@@ -104,8 +103,9 @@ export default function ResidentLedgerModal({
     });
   }, [sortedMonthKeys, allMonthsData, flat]);
 
-  // Aggregate Totals
+  // Aggregate Totals (Always run hooks at top)
   const lifetimeStats = useMemo(() => {
+    if (!flat) return { totalPaid: 0, totalBilled: 0, currentOutstanding: 0, totalAdvance: 0 };
     let totalPaid = 0;
     let totalBilled = 0;
     let currentOutstanding = 0;
@@ -125,7 +125,10 @@ export default function ResidentLedgerModal({
     }
 
     return { totalPaid, totalBilled, currentOutstanding, totalAdvance };
-  }, [ledgerHistory]);
+  }, [ledgerHistory, flat]);
+
+  // Early return ONLY after all React Hooks have been declared unconditionally
+  if (!isOpen || !flat) return null;
 
   // Handle Editing Payment Date & Paid Amount directly in Ledger
   const handleStartEdit = (record) => {
